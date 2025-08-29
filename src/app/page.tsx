@@ -14,9 +14,6 @@ export default function Home() {
           <Button asChild variant="ghost">
             <Link href="/login">Login do Paciente</Link>
           </Button>
-          <Button asChild>
-            <Link href="/register">Registrar</Link>
-          </Button>
           <Button asChild variant="outline">
             <Link href="/doctor/login">Login do Médico</Link>
           </Button>
@@ -37,13 +34,6 @@ export default function Home() {
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
                     ConsuOnline ajuda você a agendar suas consultas de saúde com facilidade. Diga adeus à espera ao telefone.
                   </p>
-                </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
-                    <Link href="/register">
-                      Agende uma Consulta
-                    </Link>
-                  </Button>
                 </div>
               </div>
               <Image
@@ -103,5 +93,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
