@@ -28,6 +28,8 @@ const weekDaysPT: { [key in DayOfWeek]: string } = {
 
 const formSchema = z.object({
   name: z.string().min(1, 'O nome é obrigatório'),
+  email: z.string().email('O email é inválido'),
+  password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
   specialty: z.string().min(1, 'A especialidade é obrigatória'),
   appointmentDuration: z.coerce.number().min(5, 'A duração deve ser de no mínimo 5 minutos'),
   availability: z.array(z.object({
@@ -55,6 +57,8 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
+      email: '',
+      password: '',
       specialty: '',
       appointmentDuration: 30,
       availability: weekDays.map(day => ({ day, enabled: false, start: '09:00', end: '17:00' }))
@@ -67,6 +71,8 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
     const newDoctor: Doctor = {
       id: `doc_${new Date().getTime()}`,
       name: data.name,
+      email: data.email,
+      password: data.password,
       specialty: data.specialty,
       appointmentDuration: data.appointmentDuration,
       availability: data.availability.reduce((acc, curr) => {
@@ -113,6 +119,14 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
                   )} />
                   <FormField control={form.control} name="specialty" render={({ field }) => (
                     <FormItem><FormLabel>Especialidade</FormLabel><FormControl><Input placeholder="Cardiologia" {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+                </div>
+                 <div className="grid grid-cols-2 gap-4">
+                  <FormField control={form.control} name="email" render={({ field }) => (
+                    <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="medico@email.com" {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+                  <FormField control={form.control} name="password" render={({ field }) => (
+                    <FormItem><FormLabel>Senha</FormLabel><FormControl><Input type="password" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                 </div>
                  <FormField control={form.control} name="appointmentDuration" render={({ field }) => (
@@ -185,3 +199,5 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
     </div>
   );
 }
+
+    

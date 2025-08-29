@@ -16,13 +16,19 @@ import { Logo } from './Logo';
 import { useRouter } from 'next/navigation';
 
 export function Header() {
-  const { user, isAdmin, logout } = useAuth();
+  const { user, isAdmin, isDoctor, logout } = useAuth();
   const router = useRouter();
 
   const getInitials = (name: string | undefined) => {
     if (!name) return 'U';
     return name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase();
   };
+
+  const getDashboardPath = () => {
+    if (isAdmin) return '/admin/dashboard';
+    if (isDoctor) return '/doctor/dashboard';
+    return '/dashboard';
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
@@ -48,14 +54,14 @@ export function Header() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push(isAdmin ? '/admin/dashboard' : '/dashboard')}>
+              <DropdownMenuItem onClick={() => router.push(getDashboardPath())}>
                 <LayoutDashboard className="mr-2 h-4 w-4" />
-                <span>Dashboard</span>
+                <span>Painel</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logout}>
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
+                <span>Sair</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -64,3 +70,5 @@ export function Header() {
     </header>
   );
 }
+
+    

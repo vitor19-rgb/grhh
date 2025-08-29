@@ -9,6 +9,8 @@ export interface Patient {
 export interface Doctor {
   id: string;
   name: string;
+  email: string;
+  password: string; // NOTE: In a real app, never store plain text passwords.
   specialty: string;
   availability: {
     [day: string]: { start: string; end:string } | undefined;
@@ -27,3 +29,4 @@ export interface Appointment {
 }
 
 export type DayOfWeek = 'Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday';
+    

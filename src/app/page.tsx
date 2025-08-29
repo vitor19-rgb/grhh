@@ -17,6 +17,9 @@ export default function Home() {
           <Button asChild>
             <Link href="/register">Registrar</Link>
           </Button>
+          <Button asChild variant="outline">
+            <Link href="/doctor/login">Login do Médico</Link>
+          </Button>
           <Button asChild variant="outline" className="hidden sm:flex">
             <Link href="/admin/login">Login de Admin</Link>
           </Button>
@@ -100,3 +103,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
