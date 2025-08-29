@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import DoctorsTab from "./DoctorsTab";
 import PatientsTab from "./PatientsTab";
 import useLocalStorage from "@/hooks/use-local-storage";
-import { APPOINTMENTS_KEY, Appointment, DOCTORS_KEY, Doctor, PATIENTS_KEY, Patient } from "@/lib/types";
-import { initialDoctors } from "@/lib/data";
+import type { Appointment, Doctor, Patient } from "@/lib/types";
+import { APPOINTMENTS_KEY, DOCTORS_KEY, PATIENTS_KEY, initialDoctors } from "@/lib/data";
 
 export default function AdminDashboard() {
   const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, initialDoctors);
