@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import useLocalStorage from '@/hooks/use-local-storage';
 import { useAuth } from '@/hooks/use-auth';
-import { Appointment, APPOINTMENTS_KEY, Doctor, DOCTORS_KEY, Patient, PATIENTS_KEY } from '@/lib/types';
-import { initialDoctors } from '@/lib/data';
+import type { Appointment, Doctor, Patient } from '@/lib/types';
+import { APPOINTMENTS_KEY, DOCTORS_KEY, PATIENTS_KEY, initialDoctors } from '@/lib/data';
 import UpcomingAppointments from '@/components/dashboard/UpcomingAppointments';
 import AppointmentScheduler from '@/components/dashboard/AppointmentScheduler';
 import PatientSchedule from '@/components/dashboard/PatientSchedule';
