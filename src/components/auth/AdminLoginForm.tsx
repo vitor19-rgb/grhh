@@ -13,8 +13,8 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Invalid email address.' }),
-  password: z.string().min(1, { message: 'Password is required.' }),
+  email: z.string().email({ message: 'Endereço de e-mail inválido.' }),
+  password: z.string().min(1, { message: 'A senha é obrigatória.' }),
 });
 
 export function AdminLoginForm() {
@@ -37,15 +37,15 @@ export function AdminLoginForm() {
       const success = adminLogin(values.email, values.password);
       if (success) {
         toast({
-          title: 'Admin Login Successful',
-          description: 'Welcome, Admin!',
+          title: 'Login de Admin bem-sucedido',
+          description: 'Bem-vindo, Admin!',
         });
         router.push('/admin/dashboard');
       } else {
         toast({
           variant: 'destructive',
-          title: 'Login Failed',
-          description: 'Invalid admin credentials.',
+          title: 'Falha no Login',
+          description: 'Credenciais de administrador inválidas.',
         });
         setIsLoading(false);
       }
@@ -73,7 +73,7 @@ export function AdminLoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Senha</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="••••••••" {...field} />
               </FormControl>

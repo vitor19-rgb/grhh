@@ -80,12 +80,12 @@ export default function AppointmentScheduler({
     appointmentDateTime.setHours(hours, minutes);
 
     const patientAppointments = appointments.filter(a => a.patientId === user.id)
-      .map(a => `${a.doctorName} on ${format(new Date(a.dateTime), 'PPP p')}`).join(', ');
+      .map(a => `${a.doctorName} em ${format(new Date(a.dateTime), 'PPP p')}`).join(', ');
 
     const input: DetectConflictsInput = {
       appointmentDateTime: appointmentDateTime.toISOString(),
-      existingAppointments: patientAppointments || 'No existing appointments',
-      patientSchedule: patientSchedule || 'No personal schedule provided',
+      existingAppointments: patientAppointments || 'Nenhuma consulta existente',
+      patientSchedule: patientSchedule || 'Nenhuma agenda pessoal fornecida',
     };
     
     try {
@@ -93,11 +93,11 @@ export default function AppointmentScheduler({
       if (result.hasConflicts) {
         setConflict({ hasConflicts: true, details: result.conflictDetails });
       } else {
-        setConflict({ hasConflicts: false, details: 'No conflicts detected. This time looks good!' });
+        setConflict({ hasConflicts: false, details: 'Nenhum conflito detectado. Este horário parece bom!' });
       }
     } catch (error) {
-      console.error('Error checking for conflicts:', error);
-      toast({ variant: 'destructive', title: 'Error', description: 'Could not check for scheduling conflicts.' });
+      console.error('Erro ao verificar conflitos:', error);
+      toast({ variant: 'destructive', title: 'Erro', description: 'Não foi possível verificar conflitos de agendamento.' });
     } finally {
       setIsCheckingConflict(false);
     }
@@ -105,7 +105,7 @@ export default function AppointmentScheduler({
 
   const handleBookAppointment = () => {
     if (!selectedDoctorId || !selectedDate || !selectedTime || !user) {
-      toast({ variant: 'destructive', title: 'Booking Error', description: 'Please select a doctor, date, and time.' });
+      toast({ variant: 'destructive', title: 'Erro no Agendamento', description: 'Por favor, selecione um médico, data e hora.' });
       return;
     }
     
@@ -126,7 +126,7 @@ export default function AppointmentScheduler({
     
     setTimeout(() => {
       setAppointments(prev => [...prev, newAppointment]);
-      toast({ title: 'Appointment Booked!', description: `Your appointment with ${newAppointment.doctorName} is confirmed.` });
+      toast({ title: 'Consulta Agendada!', description: `Sua consulta com ${newAppointment.doctorName} está confirmada.` });
       
       setSelectedDate(undefined);
       setSelectedTime(null);
@@ -139,15 +139,15 @@ export default function AppointmentScheduler({
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Schedule an Appointment</CardTitle>
-        <CardDescription>Choose a doctor and a time that works for you.</CardDescription>
+        <CardTitle>Agendar uma Consulta</CardTitle>
+        <CardDescription>Escolha um médico e um horário que funcione para você.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <label className="text-sm font-medium mb-2 block">1. Select a Doctor</label>
+          <label className="text-sm font-medium mb-2 block">1. Selecione um Médico</label>
           <Select onValueChange={setSelectedDoctorId} value={selectedDoctorId || ''}>
             <SelectTrigger>
-              <SelectValue placeholder="Choose a specialist" />
+              <SelectValue placeholder="Escolha um especialista" />
             </SelectTrigger>
             <SelectContent>
               {doctors.map(doctor => (
@@ -159,7 +159,7 @@ export default function AppointmentScheduler({
 
         {selectedDoctorId && (
           <div>
-            <label className="text-sm font-medium mb-2 block">2. Pick a Date</label>
+            <label className="text-sm font-medium mb-2 block">2. Escolha uma Data</label>
             <div className="flex justify-center">
               <Calendar
                 mode="single"
@@ -178,7 +178,7 @@ export default function AppointmentScheduler({
 
         {selectedDate && (
           <div>
-            <label className="text-sm font-medium mb-2 block">3. Choose a Time Slot</label>
+            <label className="text-sm font-medium mb-2 block">3. Escolha um Horário</label>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
               {availableTimeSlots.map(time => (
                 <Button 
@@ -189,7 +189,7 @@ export default function AppointmentScheduler({
                   {time}
                 </Button>
               ))}
-              {availableTimeSlots.length === 0 && <p className="text-muted-foreground col-span-full text-center">No available slots for this day.</p>}
+              {availableTimeSlots.length === 0 && <p className="text-muted-foreground col-span-full text-center">Nenhum horário disponível para este dia.</p>}
             </div>
           </div>
         )}
@@ -197,14 +197,14 @@ export default function AppointmentScheduler({
         {isCheckingConflict && (
           <div className="flex items-center justify-center p-4 rounded-md bg-secondary">
              <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
-             <span className="text-muted-foreground">Our AI is checking for conflicts...</span>
+             <span className="text-muted-foreground">Nossa IA está verificando conflitos...</span>
           </div>
         )}
 
         {conflict && (
           <Alert variant={conflict.hasConflicts ? 'destructive' : 'default'} className={!conflict.hasConflicts ? 'bg-green-100 border-green-200' : ''}>
             {conflict.hasConflicts ? <AlertCircle className="h-4 w-4" /> : <Sparkles className="h-4 w-4 text-green-700" />}
-            <AlertTitle>{conflict.hasConflicts ? 'Potential Conflict Detected' : 'Looking Good!'}</AlertTitle>
+            <AlertTitle>{conflict.hasConflicts ? 'Possível Conflito Detectado' : 'Parece Bom!'}</AlertTitle>
             <AlertDescription className={!conflict.hasConflicts ? 'text-green-800' : ''}>
               {conflict.details}
             </AlertDescription>
@@ -214,7 +214,7 @@ export default function AppointmentScheduler({
         {selectedTime && !isCheckingConflict && (
           <Button onClick={handleBookAppointment} className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isBooking || conflict?.hasConflicts}>
             {isBooking && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {conflict?.hasConflicts ? 'Choose another time' : 'Confirm Booking'}
+            {conflict?.hasConflicts ? 'Escolha outro horário' : 'Confirmar Agendamento'}
           </Button>
         )}
       </CardContent>

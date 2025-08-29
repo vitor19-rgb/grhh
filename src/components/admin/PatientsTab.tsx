@@ -19,9 +19,9 @@ export default function PatientsTab({ patients, appointments }: PatientsTabProps
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
+            <TableHead>Nome</TableHead>
             <TableHead>Email</TableHead>
-            <TableHead className="text-center">Appointments</TableHead>
+            <TableHead className="text-center">Consultas</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -37,7 +37,7 @@ export default function PatientsTab({ patients, appointments }: PatientsTabProps
            {patients.length === 0 && (
             <TableRow>
               <TableCell colSpan={3} className="text-center text-muted-foreground h-24">
-                No patients have registered yet.
+                Nenhum paciente se registrou ainda.
               </TableCell>
             </TableRow>
           )}

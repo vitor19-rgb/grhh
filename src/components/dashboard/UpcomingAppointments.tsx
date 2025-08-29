@@ -2,8 +2,9 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Appointment } from '@/lib/types';
-import { Calendar, Clock, Stethoscope } from 'lucide-react';
+import { Calendar, Clock } from 'lucide-react';
 import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface UpcomingAppointmentsProps {
   appointments: Appointment[];
@@ -17,8 +18,8 @@ export default function UpcomingAppointments({ appointments }: UpcomingAppointme
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Upcoming Appointments</CardTitle>
-        <CardDescription>Here are your scheduled consultations.</CardDescription>
+        <CardTitle>Próximas Consultas</CardTitle>
+        <CardDescription>Aqui estão suas consultas agendadas.</CardDescription>
       </CardHeader>
       <CardContent>
         {upcoming.length > 0 ? (
@@ -27,12 +28,12 @@ export default function UpcomingAppointments({ appointments }: UpcomingAppointme
               <li key={app.id} className="p-4 rounded-lg border bg-secondary/50">
                 <div className="flex items-center justify-between">
                   <p className="font-semibold text-primary">{app.doctorName}</p>
-                   <p className="text-sm text-muted-foreground">{format(new Date(app.dateTime), 'E, MMM d')}</p>
+                   <p className="text-sm text-muted-foreground capitalize">{format(new Date(app.dateTime), 'E, d MMM', { locale: ptBR })}</p>
                 </div>
                 <div className="flex items-center text-sm text-muted-foreground mt-2 space-x-4">
                    <div className="flex items-center">
                      <Clock className="mr-1.5 h-4 w-4" />
-                     <span>{format(new Date(app.dateTime), 'p')}</span>
+                     <span>{format(new Date(app.dateTime), 'p', { locale: ptBR })}</span>
                    </div>
                 </div>
               </li>
@@ -41,7 +42,7 @@ export default function UpcomingAppointments({ appointments }: UpcomingAppointme
         ) : (
           <div className="text-center text-muted-foreground py-8">
             <Calendar className="mx-auto h-12 w-12 text-gray-400" />
-            <p className="mt-2">No upcoming appointments.</p>
+            <p className="mt-2">Nenhuma consulta agendada.</p>
           </div>
         )}
       </CardContent>

@@ -14,21 +14,21 @@ export default function PatientLoginPage() {
               <div className="mb-4 flex justify-center">
                  <Logo />
               </div>
-              <CardTitle className="text-2xl font-bold font-headline">Patient Login</CardTitle>
-              <CardDescription>Enter your email below to login to your account</CardDescription>
+              <CardTitle className="text-2xl font-bold font-headline">Login do Paciente</CardTitle>
+              <CardDescription>Insira seu e-mail abaixo para fazer login em sua conta</CardDescription>
             </CardHeader>
             <CardContent>
               <PatientLoginForm />
               <div className="mt-4 text-center text-sm">
-                Don&apos;t have an account?{' '}
+                Não tem uma conta?{' '}
                 <Link href="/register" className="underline text-primary">
-                  Sign up
+                  Cadastre-se
                 </Link>
               </div>
               <div className="mt-2 text-center text-sm">
-                Are you an admin?{' '}
+                Você é um administrador?{' '}
                 <Link href="/admin/login" className="underline text-primary">
-                  Login here
+                  Faça login aqui
                 </Link>
               </div>
             </CardContent>

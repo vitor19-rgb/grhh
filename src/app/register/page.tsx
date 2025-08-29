@@ -14,13 +14,13 @@ export default function PatientRegisterPage() {
               <div className="mb-4 flex justify-center">
                  <Logo />
               </div>
-              <CardTitle className="text-2xl font-bold font-headline">Create an Account</CardTitle>
-              <CardDescription>Enter your details below to register</CardDescription>
+              <CardTitle className="text-2xl font-bold font-headline">Criar uma Conta</CardTitle>
+              <CardDescription>Insira seus dados abaixo para se registrar</CardDescription>
             </CardHeader>
             <CardContent>
               <PatientRegisterForm />
               <div className="mt-4 text-center text-sm">
-                Already have an account?{' '}
+                Já tem uma conta?{' '}
                 <Link href="/login" className="underline text-primary">
                   Login
                 </Link>

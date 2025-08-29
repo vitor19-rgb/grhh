@@ -16,14 +16,14 @@ export default function AdminDashboard() {
   return (
     <Tabs defaultValue="doctors" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="doctors">Manage Doctors</TabsTrigger>
-        <TabsTrigger value="patients">Manage Patients</TabsTrigger>
+        <TabsTrigger value="doctors">Gerenciar Médicos</TabsTrigger>
+        <TabsTrigger value="patients">Gerenciar Pacientes</TabsTrigger>
       </TabsList>
       <TabsContent value="doctors">
         <Card>
           <CardHeader>
-            <CardTitle>Doctors</CardTitle>
-            <CardDescription>View and manage doctor profiles and schedules.</CardDescription>
+            <CardTitle>Médicos</CardTitle>
+            <CardDescription>Visualize e gerencie perfis e horários dos médicos.</CardDescription>
           </CardHeader>
           <CardContent>
             <DoctorsTab doctors={doctors} setDoctors={setDoctors} />
@@ -33,8 +33,8 @@ export default function AdminDashboard() {
       <TabsContent value="patients">
         <Card>
           <CardHeader>
-            <CardTitle>Patients</CardTitle>
-            <CardDescription>View registered patient information.</CardDescription>
+            <CardTitle>Pacientes</CardTitle>
+            <CardDescription>Visualize as informações dos pacientes registrados.</CardDescription>
           </CardHeader>
           <CardContent>
             <PatientsTab patients={patients} appointments={appointments} />

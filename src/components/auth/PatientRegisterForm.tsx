@@ -13,9 +13,9 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Invalid email address.' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
+  name: z.string().min(2, { message: 'O nome deve ter pelo menos 2 caracteres.' }),
+  email: z.string().email({ message: 'Endereço de e-mail inválido.' }),
+  password: z.string().min(6, { message: 'A senha deve ter pelo menos 6 caracteres.' }),
 });
 
 export function PatientRegisterForm() {
@@ -43,15 +43,15 @@ export function PatientRegisterForm() {
 
       if (success) {
         toast({
-          title: 'Registration Successful',
-          description: 'You can now log in with your credentials.',
+          title: 'Registro bem-sucedido',
+          description: 'Agora você pode fazer login com suas credenciais.',
         });
         router.push('/login');
       } else {
         toast({
           variant: 'destructive',
-          title: 'Registration Failed',
-          description: 'An account with this email already exists.',
+          title: 'Falha no Registro',
+          description: 'Uma conta com este e-mail já existe.',
         });
         setIsLoading(false);
       }
@@ -66,9 +66,9 @@ export function PatientRegisterForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Full Name</FormLabel>
+              <FormLabel>Nome Completo</FormLabel>
               <FormControl>
-                <Input placeholder="John Doe" {...field} />
+                <Input placeholder="João da Silva" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -81,7 +81,7 @@ export function PatientRegisterForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="name@example.com" {...field} />
+                <Input placeholder="nome@exemplo.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -92,7 +92,7 @@ export function PatientRegisterForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Senha</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="••••••••" {...field} />
               </FormControl>
@@ -102,7 +102,7 @@ export function PatientRegisterForm() {
         />
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Register
+          Registrar
         </Button>
       </form>
     </Form>

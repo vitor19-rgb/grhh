@@ -13,8 +13,8 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Invalid email address.' }),
-  password: z.string().min(1, { message: 'Password is required.' }),
+  email: z.string().email({ message: 'Endereço de e-mail inválido.' }),
+  password: z.string().min(1, { message: 'A senha é obrigatória.' }),
 });
 
 export function PatientLoginForm() {
@@ -37,15 +37,15 @@ export function PatientLoginForm() {
       const success = login(values.email, values.password);
       if (success) {
         toast({
-          title: 'Login Successful',
-          description: 'Welcome back!',
+          title: 'Login bem-sucedido',
+          description: 'Bem-vindo(a) de volta!',
         });
         router.push('/dashboard');
       } else {
         toast({
           variant: 'destructive',
-          title: 'Login Failed',
-          description: 'Invalid email or password.',
+          title: 'Falha no Login',
+          description: 'E-mail ou senha inválidos.',
         });
         setIsLoading(false);
       }
@@ -62,7 +62,7 @@ export function PatientLoginForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="name@example.com" {...field} />
+                <Input placeholder="nome@exemplo.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -73,7 +73,7 @@ export function PatientLoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Senha</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="••••••••" {...field} />
               </FormControl>

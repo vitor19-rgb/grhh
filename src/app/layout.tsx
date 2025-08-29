@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'ConsuOnline',
-  description: 'Your online consultation platform.',
+  description: 'Sua plataforma de consultas online.',
 };
 
 export default function RootLayout({
@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="pt-BR" className="h-full">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

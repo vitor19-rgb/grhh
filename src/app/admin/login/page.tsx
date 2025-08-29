@@ -14,15 +14,15 @@ export default function AdminLoginPage() {
               <div className="mb-4 flex justify-center">
                  <Logo />
               </div>
-              <CardTitle className="text-2xl font-bold font-headline">Admin Login</CardTitle>
-              <CardDescription>Enter admin credentials to access the dashboard</CardDescription>
+              <CardTitle className="text-2xl font-bold font-headline">Login de Admin</CardTitle>
+              <CardDescription>Insira as credenciais de administrador para acessar o painel</CardDescription>
             </CardHeader>
             <CardContent>
               <AdminLoginForm />
               <div className="mt-4 text-center text-sm">
-                Not an admin?{' '}
+                Não é um administrador?{' '}
                 <Link href="/login" className="underline text-primary">
-                  Patient Login
+                  Login do Paciente
                 </Link>
               </div>
             </CardContent>

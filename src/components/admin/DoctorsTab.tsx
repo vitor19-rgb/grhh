@@ -16,18 +16,27 @@ import { useToast } from '@/hooks/use-toast';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const weekDays: DayOfWeek[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const weekDaysPT: { [key in DayOfWeek]: string } = {
+  Sunday: 'Domingo',
+  Monday: 'Segunda-feira',
+  Tuesday: 'Terça-feira',
+  Wednesday: 'Quarta-feira',
+  Thursday: 'Quinta-feira',
+  Friday: 'Sexta-feira',
+  Saturday: 'Sábado',
+};
 
 const formSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  specialty: z.string().min(1, 'Specialty is required'),
-  appointmentDuration: z.coerce.number().min(5, 'Duration must be at least 5 minutes'),
+  name: z.string().min(1, 'O nome é obrigatório'),
+  specialty: z.string().min(1, 'A especialidade é obrigatória'),
+  appointmentDuration: z.coerce.number().min(5, 'A duração deve ser de no mínimo 5 minutos'),
   availability: z.array(z.object({
     day: z.string(),
     enabled: z.boolean(),
     start: z.string(),
     end: z.string(),
   })).refine(val => val.some(day => day.enabled), {
-    message: 'At least one day must be selected for availability.'
+    message: 'Pelo menos um dia deve ser selecionado para disponibilidade.'
   })
 });
 
@@ -68,14 +77,18 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
       }, {} as Doctor['availability'])
     };
     setDoctors(prev => [...prev, newDoctor]);
-    toast({ title: 'Doctor Added', description: `${data.name} has been added to the list.` });
+    toast({ title: 'Médico Adicionado', description: `${data.name} foi adicionado à lista.` });
     form.reset();
     setOpen(false);
   };
   
   const handleDelete = (doctorId: string) => {
     setDoctors(prev => prev.filter(doc => doc.id !== doctorId));
-    toast({ variant: 'destructive', title: 'Doctor Removed' });
+    toast({ variant: 'destructive', title: 'Médico Removido' });
+  };
+  
+  const getDayNameInPortuguese = (day: string) => {
+    return weekDaysPT[day as DayOfWeek] || day;
   };
 
   return (
@@ -84,46 +97,46 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button>
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Doctor
+              <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Médico
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[625px]">
             <DialogHeader>
-              <DialogTitle>Add New Doctor</DialogTitle>
-              <DialogDescription>Fill in the details to add a new doctor to the system.</DialogDescription>
+              <DialogTitle>Adicionar Novo Médico</DialogTitle>
+              <DialogDescription>Preencha os detalhes para adicionar um novo médico ao sistema.</DialogDescription>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <FormField control={form.control} name="name" render={({ field }) => (
-                    <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input placeholder="Dr. John Doe" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Nome Completo</FormLabel><FormControl><Input placeholder="Dr. João da Silva" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="specialty" render={({ field }) => (
-                    <FormItem><FormLabel>Specialty</FormLabel><FormControl><Input placeholder="Cardiology" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Especialidade</FormLabel><FormControl><Input placeholder="Cardiologia" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                 </div>
                  <FormField control={form.control} name="appointmentDuration" render={({ field }) => (
-                    <FormItem><FormLabel>Appointment Duration (minutes)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Duração da Consulta (minutos)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                 
                 <FormItem>
-                  <FormLabel>Availability</FormLabel>
+                  <FormLabel>Disponibilidade</FormLabel>
                    <div className="space-y-2">
                     {fields.map((field, index) => (
                       <div key={field.id} className="flex items-center gap-4 p-2 border rounded-md">
                         <FormField control={form.control} name={`availability.${index}.enabled`} render={({ field }) => (
                           <FormItem className="flex items-center gap-2 space-y-0">
                             <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-                            <FormLabel className="w-24">{weekDays[index]}</FormLabel>
+                            <FormLabel className="w-24">{weekDaysPT[weekDays[index]]}</FormLabel>
                           </FormItem>
                          )} />
                          {form.watch(`availability.${index}.enabled`) && (
                             <>
                               <FormField control={form.control} name={`availability.${index}.start`} render={({ field }) => (
-                                <FormItem><FormLabel className="text-xs">Start</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
+                                <FormItem><FormLabel className="text-xs">Início</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
                               )} />
                               <FormField control={form.control} name={`availability.${index}.end`} render={({ field }) => (
-                                <FormItem><FormLabel className="text-xs">End</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
+                                <FormItem><FormLabel className="text-xs">Fim</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
                               )} />
                             </>
                           )}
@@ -133,7 +146,7 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
                   </div>
                 </FormItem>
                 <DialogFooter>
-                  <Button type="submit">Save Doctor</Button>
+                  <Button type="submit">Salvar Médico</Button>
                 </DialogFooter>
               </form>
             </Form>
@@ -144,9 +157,9 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Specialty</TableHead>
-              <TableHead>Available Days</TableHead>
+              <TableHead>Nome</TableHead>
+              <TableHead>Especialidade</TableHead>
+              <TableHead>Dias Disponíveis</TableHead>
               <TableHead className="text-right"></TableHead>
             </TableRow>
           </TableHeader>
@@ -155,12 +168,12 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
               <TableRow key={doctor.id}>
                 <TableCell className="font-medium">{doctor.name}</TableCell>
                 <TableCell>{doctor.specialty}</TableCell>
-                <TableCell>{Object.keys(doctor.availability).join(', ')}</TableCell>
+                <TableCell>{Object.keys(doctor.availability).map(getDayNameInPortuguese).join(', ')}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem onClick={() => handleDelete(doctor.id)} className="text-red-600">Delete</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDelete(doctor.id)} className="text-red-600">Excluir</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

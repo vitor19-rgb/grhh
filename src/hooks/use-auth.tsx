@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setIsLoading(false);
-  }, [auth]);
+  }, []);
 
   const login = (email: string, pass: string): boolean => {
     const patient = patients.find(p => p.email === email && p.password === pass);

@@ -19,29 +19,29 @@ export default function PatientSchedule({ initialSchedule, onUpdate }: PatientSc
   const handleSave = () => {
     onUpdate(schedule);
     toast({
-      title: 'Schedule Updated',
-      description: 'Your personal schedule has been saved.',
+      title: 'Agenda Atualizada',
+      description: 'Sua agenda pessoal foi salva.',
     });
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Your Personal Schedule</CardTitle>
+        <CardTitle>Sua Agenda Pessoal</CardTitle>
         <CardDescription>
-          For better conflict detection, tell us about your regular commitments (e.g., "Work 9am-5pm Mon-Fri", "Yoga class Tuesdays at 7pm").
+          Para uma melhor detecção de conflitos, informe-nos sobre seus compromissos regulares (ex: "Trabalho das 9h às 17h de seg-sex", "Aula de ioga às terças-feiras às 19h").
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <Textarea
-          placeholder="Describe your weekly schedule..."
+          placeholder="Descreva sua agenda semanal..."
           value={schedule}
           onChange={(e) => setSchedule(e.target.value)}
           rows={5}
         />
         <Button onClick={handleSave} className="w-full">
           <Check className="mr-2 h-4 w-4" />
-          Save Schedule
+          Salvar Agenda
         </Button>
       </CardContent>
     </Card>
