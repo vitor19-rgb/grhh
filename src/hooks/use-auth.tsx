@@ -3,7 +3,8 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import useLocalStorage from './use-local-storage';
-import { AUTH_KEY, Patient, PATIENTS_KEY } from '@/lib/types';
+import { Patient } from '@/lib/types';
+import { AUTH_KEY, PATIENTS_KEY } from '@/lib/data';
 import { Loader2 } from 'lucide-react';
 
 interface AuthContextType {
