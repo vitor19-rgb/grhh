@@ -4,6 +4,7 @@ import { useState, useEffect, createContext, useContext, ReactNode } from 'react
 import { useRouter } from 'next/navigation';
 import useLocalStorage from './use-local-storage';
 import { AUTH_KEY, Patient, PATIENTS_KEY } from '@/lib/types';
+import { Loader2 } from 'lucide-react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -69,8 +70,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return true;
   };
 
+  const contextValue: AuthContextType = { ...auth, isLoading, login, adminLogin, logout, register };
+
   return (
-    <AuthContext.Provider value={{ ...auth, isLoading, login, adminLogin, logout, register }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
@@ -103,7 +106,7 @@ export const ProtectRoute = ({ children, adminOnly = false }: { children: ReactN
   if (isLoading || !isAuthenticated || (adminOnly && !isAdmin)) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
   }
