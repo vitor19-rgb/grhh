@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { ScrollArea } from '../ui/scroll-area';
 
 const weekDays: DayOfWeek[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const weekDaysPT: { [key in DayOfWeek]: string } = {
@@ -106,64 +107,66 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
               <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Médico
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[625px]">
+          <DialogContent className="sm:max-w-[625px] max-h-[90vh] flex flex-col">
             <DialogHeader>
               <DialogTitle>Adicionar Novo Médico</DialogTitle>
               <DialogDescription>Preencha os detalhes para adicionar um novo médico ao sistema.</DialogDescription>
             </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField control={form.control} name="name" render={({ field }) => (
-                    <FormItem><FormLabel>Nome Completo</FormLabel><FormControl><Input placeholder="Dr. João da Silva" {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                  <FormField control={form.control} name="specialty" render={({ field }) => (
-                    <FormItem><FormLabel>Especialidade</FormLabel><FormControl><Input placeholder="Cardiologia" {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                </div>
-                 <div className="grid grid-cols-2 gap-4">
-                  <FormField control={form.control} name="email" render={({ field }) => (
-                    <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="medico@email.com" {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                  <FormField control={form.control} name="password" render={({ field }) => (
-                    <FormItem><FormLabel>Senha</FormLabel><FormControl><Input type="password" {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                </div>
-                 <FormField control={form.control} name="appointmentDuration" render={({ field }) => (
-                    <FormItem><FormLabel>Duração da Consulta (minutos)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                
-                <FormItem>
-                  <FormLabel>Disponibilidade</FormLabel>
-                   <div className="space-y-2">
-                    {fields.map((field, index) => (
-                      <div key={field.id} className="flex items-center gap-4 p-2 border rounded-md">
-                        <FormField control={form.control} name={`availability.${index}.enabled`} render={({ field }) => (
-                          <FormItem className="flex items-center gap-2 space-y-0">
-                            <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-                            <FormLabel className="w-24">{weekDaysPT[weekDays[index]]}</FormLabel>
-                          </FormItem>
-                         )} />
-                         {form.watch(`availability.${index}.enabled`) && (
-                            <>
-                              <FormField control={form.control} name={`availability.${index}.start`} render={({ field }) => (
-                                <FormItem><FormLabel className="text-xs">Início</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
-                              )} />
-                              <FormField control={form.control} name={`availability.${index}.end`} render={({ field }) => (
-                                <FormItem><FormLabel className="text-xs">Fim</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
-                              )} />
-                            </>
-                          )}
-                      </div>
-                    ))}
-                    <FormMessage>{form.formState.errors.availability?.root?.message}</FormMessage>
+            <ScrollArea className="pr-6 -mr-6">
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField control={form.control} name="name" render={({ field }) => (
+                      <FormItem><FormLabel>Nome Completo</FormLabel><FormControl><Input placeholder="Dr. João da Silva" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="specialty" render={({ field }) => (
+                      <FormItem><FormLabel>Especialidade</FormLabel><FormControl><Input placeholder="Cardiologia" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
                   </div>
-                </FormItem>
-                <DialogFooter>
-                  <Button type="submit">Salvar Médico</Button>
-                </DialogFooter>
-              </form>
-            </Form>
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField control={form.control} name="email" render={({ field }) => (
+                      <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="medico@email.com" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="password" render={({ field }) => (
+                      <FormItem><FormLabel>Senha</FormLabel><FormControl><Input type="password" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                  </div>
+                  <FormField control={form.control} name="appointmentDuration" render={({ field }) => (
+                      <FormItem><FormLabel>Duração da Consulta (minutos)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                  
+                  <FormItem>
+                    <FormLabel>Disponibilidade</FormLabel>
+                    <div className="space-y-2">
+                      {fields.map((field, index) => (
+                        <div key={field.id} className="flex items-center gap-4 p-2 border rounded-md">
+                          <FormField control={form.control} name={`availability.${index}.enabled`} render={({ field }) => (
+                            <FormItem className="flex items-center gap-2 space-y-0">
+                              <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                              <FormLabel className="w-24">{weekDaysPT[weekDays[index]]}</FormLabel>
+                            </FormItem>
+                          )} />
+                          {form.watch(`availability.${index}.enabled`) && (
+                              <>
+                                <FormField control={form.control} name={`availability.${index}.start`} render={({ field }) => (
+                                  <FormItem><FormLabel className="text-xs">Início</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
+                                )} />
+                                <FormField control={form.control} name={`availability.${index}.end`} render={({ field }) => (
+                                  <FormItem><FormLabel className="text-xs">Fim</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
+                                )} />
+                              </>
+                            )}
+                        </div>
+                      ))}
+                      <FormMessage>{form.formState.errors.availability?.root?.message}</FormMessage>
+                    </div>
+                  </FormItem>
+                  <DialogFooter className="pt-4 sticky bottom-0 bg-card">
+                    <Button type="submit">Salvar Médico</Button>
+                  </DialogFooter>
+                </form>
+              </Form>
+            </ScrollArea>
           </DialogContent>
         </Dialog>
       </div>
@@ -199,5 +202,3 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
     </div>
   );
 }
-
-    
