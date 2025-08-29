@@ -20,6 +20,12 @@ export default function PatientLoginPage() {
             <CardContent>
               <PatientLoginForm />
               <div className="mt-4 text-center text-sm">
+                Não tem uma conta?{' '}
+                <Link href="/register" className="underline text-primary">
+                  Crie uma conta
+                </Link>
+              </div>
+              <div className="mt-2 text-center text-sm">
                 Você é um médico?{' '}
                 <Link href="/doctor/login" className="underline text-primary">
                   Faça login aqui
