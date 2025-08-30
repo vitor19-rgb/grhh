@@ -74,11 +74,16 @@ export default function DoctorDashboardPage() {
             doctorName: specialist.name,
             dateTime: nextAvailableDate.toISOString(),
             status: 'upcoming',
-            notes: `Encaminhado por ${user?.name}. Motivo: consulta de acompanhamento.`,
+            notes: `Encaminhado por ${user?.name}.`,
         };
 
         setAppointments(prev => [...prev, newAppointment]);
-        handleCompleteAppointment(selectedAppointment.id);
+        
+        setAppointments(prev =>
+            prev.map(app =>
+                app.id === selectedAppointment.id ? { ...app, status: 'completed', notes: `Paciente encaminhado para ${specialist.name}.` } : app
+            )
+        );
 
         toast({
             title: 'Paciente Encaminhado!',
@@ -192,7 +197,7 @@ export default function DoctorDashboardPage() {
                                             <TableCell>{format(new Date(app.dateTime), 'PPP', { locale: ptBR })}</TableCell>
                                             <TableCell>{format(new Date(app.dateTime), 'p', { locale: ptBR })}</TableCell>
                                             <TableCell>{getStatusBadge(app.status, app.dateTime)}</TableCell>
-                                            <TableCell>{app.notes}</TableCell>
+                                            <TableCell>{app.notes ?? 'N/A'}</TableCell>
                                         </TableRow>
                                     ))
                                 ) : (
@@ -213,7 +218,7 @@ export default function DoctorDashboardPage() {
                     <DialogHeader>
                         <DialogTitle>Encaminhar Paciente</DialogTitle>
                         <DialogDescription>
-                            Selecione um especialista para encaminhar {selectedAppointment?.patientName}. A consulta atual será marcada como concluída.
+                            Selecione um especialista para encaminhar {selectedAppointment?.patientName}. A consulta atual será marcada como concluída com uma nota de encaminhamento.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="py-4 space-y-4">
