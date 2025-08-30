@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Appointment, Doctor } from '@/lib/types';
-import { Calendar, Clock, Stethoscope } from 'lucide-react';
+import { Calendar, Clock, Stethoscope, Send } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -45,6 +45,14 @@ export default function UpcomingAppointments({ appointments, doctors }: Upcoming
                      <span>{format(new Date(app.dateTime), 'p', { locale: ptBR })}</span>
                    </div>
                 </div>
+                {app.notes && app.notes.startsWith('Encaminhado por') && (
+                  <div className="mt-3 pt-2 border-t border-secondary">
+                    <p className="text-xs text-accent-foreground flex items-center bg-accent/20 p-2 rounded-md">
+                      <Send className="mr-2 h-3 w-3 text-accent" />
+                      {app.notes}
+                    </p>
+                  </div>
+                )}
               </li>
             ))}
           </ul>

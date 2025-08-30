@@ -74,14 +74,14 @@ export default function DoctorDashboardPage() {
             doctorName: specialist.name,
             dateTime: nextAvailableDate.toISOString(),
             status: 'upcoming',
-            notes: `Encaminhado por ${user?.name}.`,
+            notes: `Encaminhado por ${user?.name} (${user?.specialty}).`,
         };
 
         setAppointments(prev => [...prev, newAppointment]);
         
         setAppointments(prev =>
             prev.map(app =>
-                app.id === selectedAppointment.id ? { ...app, status: 'completed', notes: `Paciente encaminhado para ${specialist.name}.` } : app
+                app.id === selectedAppointment.id ? { ...app, status: 'completed', notes: `Paciente encaminhado para ${specialist.name} (${specialist.specialty}).` } : app
             )
         );
 
@@ -161,7 +161,7 @@ export default function DoctorDashboardPage() {
                                             </TableCell>
                                         </TableRow>
                                     ))
-                                ) : (
+                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={4} className="h-24 text-center">
                                             Nenhuma próxima consulta encontrada.
