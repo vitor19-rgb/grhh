@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -14,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, AlertCircle, Sparkles } from 'lucide-react';
 
 interface AppointmentSchedulerProps {
-  doctors: Doctor[];
+  doctor: Doctor;
   appointments: Appointment[];
   setAppointments: (value: Appointment[] | ((val: Appointment[]) => Appointment[])) => void;
   onAppointmentBooked: () => void;
@@ -22,13 +21,12 @@ interface AppointmentSchedulerProps {
 }
 
 export default function AppointmentScheduler({
-  doctors,
+  doctor,
   appointments,
   setAppointments,
   onAppointmentBooked,
   patientSchedule,
 }: AppointmentSchedulerProps) {
-  const [selectedDoctorId, setSelectedDoctorId] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [conflict, setConflict] = useState<{ hasConflicts: boolean; details: string } | null>(null);
@@ -38,13 +36,11 @@ export default function AppointmentScheduler({
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const selectedDoctor = useMemo(() => doctors.find(d => d.id === selectedDoctorId), [doctors, selectedDoctorId]);
-
   const timeSlots = useMemo(() => {
-    if (!selectedDoctor || !selectedDate) return [];
+    if (!selectedDate) return [];
     
     const dayOfWeek = format(selectedDate, 'EEEE') as DayOfWeek;
-    const availability = selectedDoctor.availability[dayOfWeek];
+    const availability = doctor.availability[dayOfWeek];
     if (!availability) return [];
 
     const slots: string[] = [];
@@ -53,20 +49,20 @@ export default function AppointmentScheduler({
 
     while (isBefore(currentTime, endTime)) {
       slots.push(format(currentTime, 'HH:mm'));
-      currentTime = add(currentTime, { minutes: selectedDoctor.appointmentDuration });
+      currentTime = add(currentTime, { minutes: doctor.appointmentDuration });
     }
     return slots;
-  }, [selectedDoctor, selectedDate]);
+  }, [doctor, selectedDate]);
 
   const availableTimeSlots = useMemo(() => {
-    if (!selectedDoctor || !selectedDate) return [];
+    if (!selectedDate) return [];
 
     const bookedTimes = appointments
-      .filter(app => app.doctorId === selectedDoctor.id && format(new Date(app.dateTime), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd'))
+      .filter(app => app.doctorId === doctor.id && format(new Date(app.dateTime), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd'))
       .map(app => format(new Date(app.dateTime), 'HH:mm'));
 
     return timeSlots.filter(slot => !bookedTimes.includes(slot));
-  }, [timeSlots, appointments, selectedDoctor, selectedDate]);
+  }, [timeSlots, appointments, doctor, selectedDate]);
 
   const handleTimeSelect = async (time: string) => {
     setSelectedTime(time);
@@ -104,8 +100,8 @@ export default function AppointmentScheduler({
   };
 
   const handleBookAppointment = () => {
-    if (!selectedDoctorId || !selectedDate || !selectedTime || !user) {
-      toast({ variant: 'destructive', title: 'Erro no Agendamento', description: 'Por favor, selecione um médico, data e hora.' });
+    if (!selectedDate || !selectedTime || !user) {
+      toast({ variant: 'destructive', title: 'Erro no Agendamento', description: 'Por favor, selecione uma data e hora.' });
       return;
     }
     
@@ -118,8 +114,8 @@ export default function AppointmentScheduler({
       id: new Date().toISOString(),
       patientId: user.id,
       patientName: user.name,
-      doctorId: selectedDoctorId,
-      doctorName: selectedDoctor?.name || 'N/A',
+      doctorId: doctor.id,
+      doctorName: doctor.name,
       dateTime: appointmentDateTime.toISOString(),
       status: 'upcoming',
     };
@@ -139,46 +135,29 @@ export default function AppointmentScheduler({
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Agendar uma Consulta</CardTitle>
-        <CardDescription>Escolha um médico e um horário que funcione para você.</CardDescription>
+        <CardTitle>Agendar Consulta Inicial</CardTitle>
+        <CardDescription>Toda primeira consulta é com nosso Clínico Geral, {doctor.name}.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <label className="text-sm font-medium mb-2 block">1. Selecione um Médico</label>
-          <Select onValueChange={setSelectedDoctorId} value={selectedDoctorId || ''}>
-            <SelectTrigger>
-              <SelectValue placeholder="Escolha um especialista" />
-            </SelectTrigger>
-            <SelectContent>
-              {doctors.map(doctor => (
-                <SelectItem key={doctor.id} value={doctor.id}>{doctor.name} - {doctor.specialty}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {selectedDoctorId && (
-          <div>
-            <label className="text-sm font-medium mb-2 block">2. Escolha uma Data</label>
-            <div className="flex justify-center">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={date => { setSelectedDate(date); setSelectedTime(null); setConflict(null); }}
-                disabled={(date) => {
-                  const day = getDay(date);
-                  const dayOfWeek = format(date, 'EEEE') as DayOfWeek;
-                  return isBefore(date, new Date()) || !selectedDoctor?.availability[dayOfWeek];
-                }}
-                initialFocus
-              />
-            </div>
+          <label className="text-sm font-medium mb-2 block">1. Escolha uma Data</label>
+          <div className="flex justify-center">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={date => { setSelectedDate(date); setSelectedTime(null); setConflict(null); }}
+              disabled={(date) => {
+                const dayOfWeek = format(date, 'EEEE') as DayOfWeek;
+                return isBefore(date, new Date()) || !doctor?.availability[dayOfWeek];
+              }}
+              initialFocus
+            />
           </div>
-        )}
+        </div>
 
         {selectedDate && (
           <div>
-            <label className="text-sm font-medium mb-2 block">3. Escolha um Horário</label>
+            <label className="text-sm font-medium mb-2 block">2. Escolha um Horário</label>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
               {availableTimeSlots.map(time => (
                 <Button 

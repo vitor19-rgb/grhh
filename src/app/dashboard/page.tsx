@@ -35,21 +35,27 @@ export default function DashboardPage() {
     (app) => app.patientId === user?.id
   );
 
+  const generalPractitioner = doctors.find(doc => doc.specialty === 'Clínico Geral');
+
   return (
     <div className="container mx-auto p-4 md:p-8">
       <h1 className="text-3xl font-bold mb-6 font-headline">Bem-vindo(a), {user?.name}!</h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <AppointmentScheduler
-            doctors={doctors}
-            appointments={appointments}
-            setAppointments={setAppointments}
-            onAppointmentBooked={handleAppointmentBooked}
-            patientSchedule={user?.schedule ?? ""}
-          />
+           {generalPractitioner ? (
+            <AppointmentScheduler
+              doctor={generalPractitioner}
+              appointments={appointments}
+              setAppointments={setAppointments}
+              onAppointmentBooked={handleAppointmentBooked}
+              patientSchedule={user?.schedule ?? ""}
+            />
+          ) : (
+             <p className="text-center text-muted-foreground">Nenhum clínico geral disponível para agendamento no momento.</p>
+          )}
         </div>
         <div className="space-y-8">
-          <UpcomingAppointments appointments={patientAppointments} key={refreshKey} />
+          <UpcomingAppointments appointments={patientAppointments} doctors={doctors} key={refreshKey} />
           <PatientSchedule
             initialSchedule={user?.schedule ?? ""}
             onUpdate={handleScheduleUpdate}

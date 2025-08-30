@@ -1,19 +1,24 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Appointment } from '@/lib/types';
-import { Calendar, Clock } from 'lucide-react';
+import { Appointment, Doctor } from '@/lib/types';
+import { Calendar, Clock, Stethoscope } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface UpcomingAppointmentsProps {
   appointments: Appointment[];
+  doctors: Doctor[];
 }
 
-export default function UpcomingAppointments({ appointments }: UpcomingAppointmentsProps) {
+export default function UpcomingAppointments({ appointments, doctors }: UpcomingAppointmentsProps) {
   const upcoming = appointments
     .filter(a => new Date(a.dateTime) > new Date() && a.status === 'upcoming')
     .sort((a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime());
+
+  const getDoctorSpecialty = (doctorId: string) => {
+    return doctors.find(d => d.id === doctorId)?.specialty || 'Especialista';
+  }
 
   return (
     <Card>
@@ -30,6 +35,10 @@ export default function UpcomingAppointments({ appointments }: UpcomingAppointme
                   <p className="font-semibold text-primary">{app.doctorName}</p>
                    <p className="text-sm text-muted-foreground capitalize">{format(new Date(app.dateTime), 'E, d MMM', { locale: ptBR })}</p>
                 </div>
+                 <p className="text-sm text-muted-foreground flex items-center mt-1">
+                    <Stethoscope className="mr-1.5 h-4 w-4" />
+                    {getDoctorSpecialty(app.doctorId)}
+                </p>
                 <div className="flex items-center text-sm text-muted-foreground mt-2 space-x-4">
                    <div className="flex items-center">
                      <Clock className="mr-1.5 h-4 w-4" />
