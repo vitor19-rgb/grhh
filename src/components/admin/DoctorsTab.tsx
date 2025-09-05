@@ -125,14 +125,14 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField control={form.control} name="email" render={({ field }) => (
-                      <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="medico@email.com" {...field} /></FormControl><FormMessage /></FormMessage>
+                      <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="medico@email.com" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="password" render={({ field }) => (
-                      <FormItem><FormLabel>Senha</FormLabel><FormControl><Input type="password" {...field} /></FormControl><FormMessage /></FormMessage>
+                      <FormItem><FormLabel>Senha</FormLabel><FormControl><Input type="password" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                   </div>
                   <FormField control={form.control} name="appointmentDuration" render={({ field }) => (
-                      <FormItem><FormLabel>Duração da Consulta (minutos)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormMessage>
+                      <FormItem><FormLabel>Duração da Consulta (minutos)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                   
                   <FormItem>
@@ -152,7 +152,7 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
                                   <FormItem className="flex-1"><FormLabel className="text-xs">Início</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
                                 )} />
                                 <FormField control={form.control} name={`availability.${index}.end`} render={({ field }) => (
-                                  <FormItem className="flex-1"><FormLabel className="text-xs">Fim</FormLabel><FormControl><Input type="time" {...field} /></FormControl></Form-Item>
+                                  <FormItem className="flex-1"><FormLabel className="text-xs">Fim</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
                                 )} />
                               </div>
                             )}

@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user: null,
   });
   const [patients, setPatients] = useLocalStorage<Patient[]>(PATIENTS_KEY, []);
-  const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, []);
+  const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, initialDoctors);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
