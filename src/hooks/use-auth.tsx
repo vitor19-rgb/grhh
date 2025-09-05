@@ -45,10 +45,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // This effect seeds the initial doctors into localStorage ONLY if it's not already present.
-    // This is the source of truth for doctor data across the app.
-    // Any changes made in the admin panel will persist in localStorage.
+    // This ensures that any changes made by the admin are persisted and not overwritten on page load.
     const storedDoctors = localStorage.getItem(DOCTORS_KEY);
-    if (!storedDoctors || storedDoctors === '[]') {
+    if (!storedDoctors || JSON.parse(storedDoctors).length === 0) {
       setDoctors(initialDoctors);
     }
     setIsLoading(false);
