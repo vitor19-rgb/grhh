@@ -32,6 +32,12 @@ export default function DashboardPage() {
       }
     }
   }, [user, appointments]);
+  
+  // Adicionado para limpar o estado quando o usuário muda
+  useEffect(() => {
+    setNewReferral(null);
+  }, [user?.id]);
+
 
   const handleAppointmentBooked = () => {
     setRefreshKey(prev => prev + 1);
