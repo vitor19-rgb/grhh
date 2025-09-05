@@ -40,12 +40,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user: null,
   });
   const [patients, setPatients] = useLocalStorage<Patient[]>(PATIENTS_KEY, []);
-  const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, initialDoctors);
+  const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, []);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // This effect ensures that the initial state of doctors is set
-    // if it's not already in localStorage. This is important for first-time users.
+    // This effect seeds the initial doctors into localStorage ONLY if it's not already present.
+    // This is the source of truth for doctor data across the app.
+    // Any changes made in the admin panel will persist in localStorage.
     const storedDoctors = localStorage.getItem(DOCTORS_KEY);
     if (!storedDoctors || storedDoctors === '[]') {
       setDoctors(initialDoctors);

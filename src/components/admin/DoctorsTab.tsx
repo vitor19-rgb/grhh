@@ -152,7 +152,7 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
                                   <FormItem className="flex-1"><FormLabel className="text-xs">Início</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
                                 )} />
                                 <FormField control={form.control} name={`availability.${index}.end`} render={({ field }) => (
-                                  <FormItem className="flex-1"><FormLabel className="text-xs">Fim</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
+                                  <FormItem className="flex-1"><FormLabel className="text-xs">Fim</FormLabel><FormControl><Input type="time" {...field} /></FormControl></Form-Item>
                                 )} />
                               </div>
                             )}
