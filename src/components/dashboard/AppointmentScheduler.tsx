@@ -139,7 +139,9 @@ export default function AppointmentScheduler({
                 <CardTitle>Agendar Consulta Inicial</CardTitle>
             </CardHeader>
             <CardContent>
-                <p className="text-center text-muted-foreground">Nenhum clínico geral disponível para agendamento no momento.</p>
+                <p className="text-center text-muted-foreground p-4">
+                  Nenhum clínico geral foi configurado no sistema. Entre em contato com um administrador.
+                </p>
             </CardContent>
         </Card>
     )

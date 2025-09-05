@@ -11,19 +11,27 @@ import PatientSchedule from '@/components/dashboard/PatientSchedule';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction } from '@/components/ui/alert-dialog';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function DashboardPage() {
   const { user } = useAuth();
   
   const [appointments, setAppointments] = useLocalStorage<Appointment[]>(APPOINTMENTS_KEY, []);
-  const [doctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, initialDoctors);
+  const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, initialDoctors);
   const [patients, setPatients] = useLocalStorage<Patient[]>(PATIENTS_KEY, []);
 
   const [refreshKey, setRefreshKey] = useState(0);
   const [newReferral, setNewReferral] = useState<Appointment | null>(null);
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
+    // Simulate a small delay to ensure data is loaded from localStorage
+    const timer = setTimeout(() => setIsDataLoading(false), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (user && appointments.length > 0) {
       const newAppointment = appointments.find(
         (app) => app.patientId === user.id && app.isNew
       );
@@ -75,13 +83,17 @@ export default function DashboardPage() {
         <h1 className="text-3xl font-bold mb-6 font-headline">Bem-vindo(a), {user?.name}!</h1>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            <AppointmentScheduler
-              doctor={generalPractitioner}
-              appointments={appointments}
-              setAppointments={setAppointments}
-              onAppointmentBooked={handleAppointmentBooked}
-              patientSchedule={patients.find(p => p.id === user?.id)?.schedule ?? ""}
-            />
+            {isDataLoading ? (
+              <Skeleton className="h-[400px] w-full" />
+            ) : (
+              <AppointmentScheduler
+                doctor={generalPractitioner}
+                appointments={appointments}
+                setAppointments={setAppointments}
+                onAppointmentBooked={handleAppointmentBooked}
+                patientSchedule={patients.find(p => p.id === user?.id)?.schedule ?? ""}
+              />
+            )}
           </div>
           <div className="space-y-8">
             <UpcomingAppointments appointments={patientAppointments} doctors={doctors} key={refreshKey} />
