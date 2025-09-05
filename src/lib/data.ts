@@ -14,7 +14,9 @@ export const initialDoctors: Doctor[] = [
     specialty: 'Clínico Geral',
     availability: {
       Monday: { start: '09:00', end: '17:00' },
+      Tuesday: { start: '09:00', end: '17:00' },
       Wednesday: { start: '09:00', end: '17:00' },
+      Thursday: { start: '09:00', end: '17:00' },
       Friday: { start: '10:00', end: '15:00' },
     },
     appointmentDuration: 30,
@@ -45,5 +47,29 @@ export const initialDoctors: Doctor[] = [
       Friday: { start: '08:00', end: '12:00' },
     },
     appointmentDuration: 15,
+  },
+  {
+    id: 'doc4',
+    name: 'Dr. Ben Carter',
+    email: 'ben.carter@consu.online',
+    password: 'password123',
+    specialty: 'Ortopedia',
+    availability: {
+      Monday: { start: '13:00', end: '18:00' },
+      Wednesday: { start: '13:00', end: '18:00' },
+    },
+    appointmentDuration: 25,
+  },
+  {
+    id: 'doc5',
+    name: 'Dr. Sofia Rodriguez',
+    email: 'sofia.rodriguez@consu.online',
+    password: 'password123',
+    specialty: 'Psiquiatria',
+    availability: {
+      Tuesday: { start: '09:00', end: '13:00' },
+      Friday: { start: '09:00', end: '13:00' },
+    },
+    appointmentDuration: 60,
   },
 ];
