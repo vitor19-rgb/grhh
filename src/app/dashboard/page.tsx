@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import useLocalStorage from '@/hooks/use-local-storage';
 import { useAuth } from '@/hooks/use-auth';
 import type { Appointment, Doctor, Patient } from '@/lib/types';
-import { APPOINTMENTS_KEY, DOCTORS_KEY, PATIENTS_KEY, initialDoctors } from '@/lib/data';
+import { APPOINTMENTS_KEY, DOCTORS_KEY, PATIENTS_KEY } from '@/lib/data';
 import UpcomingAppointments from '@/components/dashboard/UpcomingAppointments';
 import AppointmentScheduler from '@/components/dashboard/AppointmentScheduler';
 import PatientSchedule from '@/components/dashboard/PatientSchedule';
@@ -16,6 +16,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function DashboardPage() {
   const { user } = useAuth();
   
+  // Initialize with empty arrays, they will be populated by the effect.
   const [appointments, setAppointments] = useLocalStorage<Appointment[]>(APPOINTMENTS_KEY, []);
   const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, []);
   const [patients, setPatients] = useLocalStorage<Patient[]>(PATIENTS_KEY, []);
@@ -25,7 +26,8 @@ export default function DashboardPage() {
   const [isDataLoading, setIsDataLoading] = useState(true);
 
   useEffect(() => {
-    // This effect ensures that the component state is updated after useLocalStorage has mounted and read the data.
+    // This effect runs on the client after hydration and ensures that the state
+    // is updated with the values from localStorage before rendering the child components.
     const storedDoctors = localStorage.getItem(DOCTORS_KEY);
     if(storedDoctors) {
         setDoctors(JSON.parse(storedDoctors));
@@ -38,11 +40,13 @@ export default function DashboardPage() {
     if(storedAppointments) {
         setAppointments(JSON.parse(storedAppointments));
     }
+    // Only after attempting to load everything from localStorage, we set loading to false.
     setIsDataLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
+    // This effect checks for new referrals once the data is confirmed to be loaded.
     if (user && appointments.length > 0 && !isDataLoading) {
       const newAppointment = appointments.find(
         (app) => app.patientId === user.id && app.isNew
@@ -87,6 +91,7 @@ export default function DashboardPage() {
     (app) => app.patientId === user?.id
   );
 
+  // Find the practitioner only after data has been loaded.
   const generalPractitioner = isDataLoading ? undefined : doctors.find(doc => doc.specialty.toLowerCase() === 'clínico geral');
 
   return (
