@@ -31,9 +31,9 @@ export default function DashboardPage() {
         setNewReferral(newAppointment);
       }
     }
-  }, [user, appointments]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, appointments, refreshKey]);
   
-  // Adicionado para limpar o estado quando o usuário muda
   useEffect(() => {
     setNewReferral(null);
   }, [user?.id]);
@@ -80,7 +80,7 @@ export default function DashboardPage() {
                 appointments={appointments}
                 setAppointments={setAppointments}
                 onAppointmentBooked={handleAppointmentBooked}
-                patientSchedule={user?.schedule ?? ""}
+                patientSchedule={patients.find(p => p.id === user?.id)?.schedule ?? ""}
               />
             ) : (
                <p className="text-center text-muted-foreground">Nenhum clínico geral disponível para agendamento no momento.</p>
@@ -89,7 +89,7 @@ export default function DashboardPage() {
           <div className="space-y-8">
             <UpcomingAppointments appointments={patientAppointments} doctors={doctors} key={refreshKey} />
             <PatientSchedule
-              initialSchedule={user?.schedule ?? ""}
+              initialSchedule={patients.find(p => p.id === user?.id)?.schedule ?? ""}
               onUpdate={handleScheduleUpdate}
             />
           </div>

@@ -60,6 +60,7 @@ export default function DoctorDashboardPage() {
             return;
         }
         
+        // Simple logic to find the next available slot (e.g., 2 days from now at 10 AM)
         const nextAvailableDate = new Date();
         nextAvailableDate.setDate(nextAvailableDate.getDate() + 2);
         nextAvailableDate.setHours(10, 0, 0, 0);
@@ -73,17 +74,19 @@ export default function DoctorDashboardPage() {
             dateTime: nextAvailableDate.toISOString(),
             status: 'upcoming',
             notes: `Encaminhado por ${user?.name} (${user?.specialty}).`,
-            isNew: true,
+            isNew: true, // Mark this as a new referral for the patient
         };
 
-        setAppointments(prev => [...prev, newAppointment]);
+        // Add the new appointment and mark the old one as completed with a referral note
+        setAppointments(prev => {
+            const updatedAppointments = prev.map(app =>
+                app.id === selectedAppointment.id 
+                    ? { ...app, status: 'completed', notes: `Paciente encaminhado para ${specialist.name} (${specialist.specialty}).` } 
+                    : app
+            );
+            return [...updatedAppointments, newAppointment];
+        });
         
-        setAppointments(prev =>
-            prev.map(app =>
-                app.id === selectedAppointment.id ? { ...app, status: 'completed', notes: `Paciente encaminhado para ${specialist.name} (${specialist.specialty}).` } : app
-            )
-        );
-
         toast({
             title: 'Paciente Encaminhado!',
             description: `${patient.name} foi encaminhado para ${specialist.name}. Uma nova consulta foi criada.`,
@@ -130,52 +133,54 @@ export default function DoctorDashboardPage() {
                         <CardDescription>Estas são as suas consultas agendadas que ainda não ocorreram.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Paciente</TableHead>
-                                    <TableHead className="hidden sm:table-cell">Data</TableHead>
-                                    <TableHead className="hidden md:table-cell">Hora</TableHead>
-                                    <TableHead className="text-right">Ações</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {upcomingAppointments.length > 0 ? (
-                                    upcomingAppointments.map(app => (
-                                        <TableRow key={app.id}>
-                                            <TableCell className="font-medium">
-                                              <div>{app.patientName}</div>
-                                              <div className="text-muted-foreground text-sm sm:hidden">
-                                                {format(new Date(app.dateTime), 'PPP p', { locale: ptBR })}
-                                              </div>
-                                            </TableCell>
-                                            <TableCell className="hidden sm:table-cell">{format(new Date(app.dateTime), 'PPP', { locale: ptBR })}</TableCell>
-                                            <TableCell className="hidden md:table-cell">{format(new Date(app.dateTime), 'p', { locale: ptBR })}</TableCell>
-                                            <TableCell className="text-right">
-                                                <div className="flex flex-col sm:flex-row gap-2 justify-end">
-                                                    <Button size="sm" variant="outline" onClick={() => handleCompleteAppointment(app.id)}>
-                                                        <CheckCircle className="mr-2 h-4 w-4" />
-                                                        Concluir
-                                                    </Button>
-                                                    {user?.specialty === 'Clínico Geral' && (
-                                                        <Button size="sm" onClick={() => openReferralModal(app)}>
-                                                            <Send className="mr-2 h-4 w-4" />
-                                                            Encaminhar
+                        <div className="border rounded-md">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Paciente</TableHead>
+                                        <TableHead className="hidden sm:table-cell">Data</TableHead>
+                                        <TableHead className="hidden md:table-cell">Hora</TableHead>
+                                        <TableHead className="text-right">Ações</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {upcomingAppointments.length > 0 ? (
+                                        upcomingAppointments.map(app => (
+                                            <TableRow key={app.id}>
+                                                <TableCell className="font-medium">
+                                                  <div>{app.patientName}</div>
+                                                  <div className="text-muted-foreground text-sm sm:hidden">
+                                                    {format(new Date(app.dateTime), 'PPP p', { locale: ptBR })}
+                                                  </div>
+                                                </TableCell>
+                                                <TableCell className="hidden sm:table-cell">{format(new Date(app.dateTime), 'PPP', { locale: ptBR })}</TableCell>
+                                                <TableCell className="hidden md:table-cell">{format(new Date(app.dateTime), 'p', { locale: ptBR })}</TableCell>
+                                                <TableCell className="text-right">
+                                                    <div className="flex flex-col sm:flex-row gap-2 justify-end">
+                                                        <Button size="sm" variant="outline" onClick={() => handleCompleteAppointment(app.id)}>
+                                                            <CheckCircle className="mr-2 h-4 w-4" />
+                                                            Concluir
                                                         </Button>
-                                                    )}
-                                                </div>
+                                                        {user?.specialty === 'Clínico Geral' && (
+                                                            <Button size="sm" onClick={() => openReferralModal(app)}>
+                                                                <Send className="mr-2 h-4 w-4" />
+                                                                Encaminhar
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                     ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="h-24 text-center">
+                                                Nenhuma próxima consulta encontrada.
                                             </TableCell>
                                         </TableRow>
-                                    ))
-                                 ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={4} className="h-24 text-center">
-                                            Nenhuma próxima consulta encontrada.
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -185,39 +190,41 @@ export default function DoctorDashboardPage() {
                         <CardDescription>Estas são as suas consultas passadas e concluídas.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                         <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Paciente</TableHead>
-                                    <TableHead className="hidden sm:table-cell">Data</TableHead>
-                                    <TableHead className="hidden md:table-cell">Status</TableHead>
-                                    <TableHead>Notas</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {pastAppointments.length > 0 ? (
-                                    pastAppointments.map(app => (
-                                        <TableRow key={app.id} className="text-muted-foreground">
-                                            <TableCell className="font-medium">
-                                              <div>{app.patientName}</div>
-                                               <div className="text-muted-foreground text-sm sm:hidden">
-                                                {format(new Date(app.dateTime), 'PPP', { locale: ptBR })}
-                                              </div>
-                                            </TableCell>
-                                            <TableCell className="hidden sm:table-cell">{format(new Date(app.dateTime), 'PPP', { locale: ptBR })}</TableCell>
-                                            <TableCell className="hidden md:table-cell">{getStatusBadge(app.status, app.dateTime)}</TableCell>
-                                            <TableCell>{app.notes ?? 'N/A'}</TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : (
+                         <div className="border rounded-md">
+                             <Table>
+                                <TableHeader>
                                     <TableRow>
-                                        <TableCell colSpan={4} className="h-24 text-center">
-                                            Nenhum histórico de consulta encontrado.
-                                        </TableCell>
+                                        <TableHead>Paciente</TableHead>
+                                        <TableHead className="hidden sm:table-cell">Data</TableHead>
+                                        <TableHead className="hidden md:table-cell">Status</TableHead>
+                                        <TableHead>Notas</TableHead>
                                     </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
+                                </TableHeader>
+                                <TableBody>
+                                    {pastAppointments.length > 0 ? (
+                                        pastAppointments.map(app => (
+                                            <TableRow key={app.id} className="text-muted-foreground">
+                                                <TableCell className="font-medium">
+                                                  <div>{app.patientName}</div>
+                                                   <div className="text-muted-foreground text-sm sm:hidden">
+                                                    {format(new Date(app.dateTime), 'PPP', { locale: ptBR })}
+                                                  </div>
+                                                </TableCell>
+                                                <TableCell className="hidden sm:table-cell">{format(new Date(app.dateTime), 'PPP', { locale: ptBR })}</TableCell>
+                                                <TableCell className="hidden md:table-cell">{getStatusBadge(app.status, app.dateTime)}</TableCell>
+                                                <TableCell>{app.notes ?? 'N/A'}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="h-24 text-center">
+                                                Nenhum histórico de consulta encontrado.
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                         </div>
                     </CardContent>
                 </Card>
             </div>
