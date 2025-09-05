@@ -40,18 +40,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user: null,
   });
   const [patients, setPatients] = useLocalStorage<Patient[]>(PATIENTS_KEY, []);
-  const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, initialDoctors);
+  const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, []);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // This effect ensures that the initial state of doctors is set
     // if it's not already in localStorage. This is important for first-time users.
     const storedDoctors = localStorage.getItem(DOCTORS_KEY);
-    if (!storedDoctors) {
+    if (!storedDoctors || storedDoctors === '[]') {
       setDoctors(initialDoctors);
     }
     setIsLoading(false);
-  }, [setDoctors]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const login = (email: string, pass: string): boolean => {
     const patient = patients.find(p => p.email === email && p.password === pass);
