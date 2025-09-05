@@ -17,7 +17,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
   
   const [appointments, setAppointments] = useLocalStorage<Appointment[]>(APPOINTMENTS_KEY, []);
-  const [doctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, initialDoctors);
+  const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, []);
   const [patients, setPatients] = useLocalStorage<Patient[]>(PATIENTS_KEY, []);
 
   const [refreshKey, setRefreshKey] = useState(0);
@@ -25,9 +25,21 @@ export default function DashboardPage() {
   const [isDataLoading, setIsDataLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate a small delay to ensure data is loaded from localStorage
-    const timer = setTimeout(() => setIsDataLoading(false), 200);
-    return () => clearTimeout(timer);
+    // This effect ensures that the component state is updated after useLocalStorage has mounted and read the data.
+    const storedDoctors = localStorage.getItem(DOCTORS_KEY);
+    if(storedDoctors) {
+        setDoctors(JSON.parse(storedDoctors));
+    }
+    const storedPatients = localStorage.getItem(PATIENTS_KEY);
+    if(storedPatients) {
+        setPatients(JSON.parse(storedPatients));
+    }
+    const storedAppointments = localStorage.getItem(APPOINTMENTS_KEY);
+    if(storedAppointments) {
+        setAppointments(JSON.parse(storedAppointments));
+    }
+    setIsDataLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -75,7 +87,7 @@ export default function DashboardPage() {
     (app) => app.patientId === user?.id
   );
 
-  const generalPractitioner = doctors.find(doc => doc.specialty.toLowerCase() === 'clínico geral');
+  const generalPractitioner = isDataLoading ? undefined : doctors.find(doc => doc.specialty.toLowerCase() === 'clínico geral');
 
   return (
     <>
@@ -96,11 +108,19 @@ export default function DashboardPage() {
             )}
           </div>
           <div className="space-y-8">
-            <UpcomingAppointments appointments={patientAppointments} doctors={doctors} key={refreshKey} />
-            <PatientSchedule
-              initialSchedule={patients.find(p => p.id === user?.id)?.schedule ?? ""}
-              onUpdate={handleScheduleUpdate}
-            />
+             {isDataLoading ? (
+               <Skeleton className="h-[200px] w-full" />
+            ) : (
+              <UpcomingAppointments appointments={patientAppointments} doctors={doctors} key={refreshKey} />
+            )}
+             {isDataLoading ? (
+               <Skeleton className="h-[200px] w-full" />
+            ) : (
+              <PatientSchedule
+                initialSchedule={patients.find(p => p.id === user?.id)?.schedule ?? ""}
+                onUpdate={handleScheduleUpdate}
+              />
+            )}
           </div>
         </div>
       </div>
