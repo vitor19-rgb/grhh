@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user: null,
   });
   const [patients, setPatients] = useLocalStorage<Patient[]>(PATIENTS_KEY, []);
-  const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, []);
+  const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, initialDoctors);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -64,8 +64,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
   
   const doctorLogin = (email: string, pass: string): boolean => {
-    // `doctors` is now reliably populated from localStorage by the useLocalStorage hook
-    if (!doctors || doctors.length === 0) return false;
     const doctor = doctors.find(d => d.email === email && d.password === pass);
     if (doctor) {
       setAuth({ isAuthenticated: true, isAdmin: false, isDoctor: true, user: doctor });
