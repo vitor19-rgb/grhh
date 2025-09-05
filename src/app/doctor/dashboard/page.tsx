@@ -117,7 +117,7 @@ export default function DoctorDashboardPage() {
         return <Badge>Próxima</Badge>;
     }
     
-    const specialists = doctors.filter(d => d.specialty !== 'Clínico Geral' && d.id !== user?.id);
+    const specialists = doctors.filter(d => d.specialty.toLowerCase() !== 'clínico geral' && d.id !== user?.id);
 
     return (
         <div className="container mx-auto p-4 sm:p-6 md:p-8">
@@ -161,7 +161,7 @@ export default function DoctorDashboardPage() {
                                                             <CheckCircle className="mr-2 h-4 w-4" />
                                                             Concluir
                                                         </Button>
-                                                        {user?.specialty === 'Clínico Geral' && (
+                                                        {user?.specialty.toLowerCase() === 'clínico geral' && (
                                                             <Button size="sm" onClick={() => openReferralModal(app)}>
                                                                 <Send className="mr-2 h-4 w-4" />
                                                                 Encaminhar

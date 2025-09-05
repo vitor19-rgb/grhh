@@ -17,7 +17,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
   
   const [appointments, setAppointments] = useLocalStorage<Appointment[]>(APPOINTMENTS_KEY, []);
-  const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, initialDoctors);
+  const [doctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, initialDoctors);
   const [patients, setPatients] = useLocalStorage<Patient[]>(PATIENTS_KEY, []);
 
   const [refreshKey, setRefreshKey] = useState(0);
@@ -26,12 +26,12 @@ export default function DashboardPage() {
 
   useEffect(() => {
     // Simulate a small delay to ensure data is loaded from localStorage
-    const timer = setTimeout(() => setIsDataLoading(false), 100);
+    const timer = setTimeout(() => setIsDataLoading(false), 200);
     return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
-    if (user && appointments.length > 0) {
+    if (user && appointments.length > 0 && !isDataLoading) {
       const newAppointment = appointments.find(
         (app) => app.patientId === user.id && app.isNew
       );
@@ -40,7 +40,7 @@ export default function DashboardPage() {
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, appointments, refreshKey]);
+  }, [user, appointments, refreshKey, isDataLoading]);
   
   useEffect(() => {
     // When user changes, reset the referral state
@@ -75,7 +75,7 @@ export default function DashboardPage() {
     (app) => app.patientId === user?.id
   );
 
-  const generalPractitioner = doctors.find(doc => doc.specialty === 'Clínico Geral');
+  const generalPractitioner = doctors.find(doc => doc.specialty.toLowerCase() === 'clínico geral');
 
   return (
     <>
