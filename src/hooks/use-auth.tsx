@@ -44,8 +44,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // If there are no doctors in local storage, initialize with default data
-    if (localStorage.getItem(DOCTORS_KEY) === null) {
+    // This effect ensures that the initial state of doctors is set
+    // if it's not already in localStorage. This is important for first-time users.
+    const storedDoctors = localStorage.getItem(DOCTORS_KEY);
+    if (!storedDoctors) {
       setDoctors(initialDoctors);
     }
     setIsLoading(false);
@@ -61,6 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
   
   const doctorLogin = (email: string, pass: string): boolean => {
+    // `doctors` is now reliably populated from localStorage by the useLocalStorage hook
+    if (!doctors || doctors.length === 0) return false;
     const doctor = doctors.find(d => d.email === email && d.password === pass);
     if (doctor) {
       setAuth({ isAuthenticated: true, isAdmin: false, isDoctor: true, user: doctor });
