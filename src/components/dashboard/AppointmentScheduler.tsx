@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, AlertCircle, Sparkles } from 'lucide-react';
 
 interface AppointmentSchedulerProps {
-  doctor: Doctor;
+  doctor?: Doctor;
   appointments: Appointment[];
   setAppointments: (value: Appointment[] | ((val: Appointment[]) => Appointment[])) => void;
   onAppointmentBooked: () => void;
@@ -37,7 +37,7 @@ export default function AppointmentScheduler({
   const { toast } = useToast();
 
   const timeSlots = useMemo(() => {
-    if (!selectedDate) return [];
+    if (!selectedDate || !doctor) return [];
     
     const dayOfWeek = format(selectedDate, 'EEEE') as DayOfWeek;
     const availability = doctor.availability[dayOfWeek];
@@ -55,7 +55,7 @@ export default function AppointmentScheduler({
   }, [doctor, selectedDate]);
 
   const availableTimeSlots = useMemo(() => {
-    if (!selectedDate) return [];
+    if (!selectedDate || !doctor) return [];
 
     const bookedTimes = appointments
       .filter(app => app.doctorId === doctor.id && format(new Date(app.dateTime), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd'))
@@ -100,7 +100,7 @@ export default function AppointmentScheduler({
   };
 
   const handleBookAppointment = () => {
-    if (!selectedDate || !selectedTime || !user) {
+    if (!selectedDate || !selectedTime || !user || !doctor) {
       toast({ variant: 'destructive', title: 'Erro no Agendamento', description: 'Por favor, selecione uma data e hora.' });
       return;
     }
@@ -131,6 +131,19 @@ export default function AppointmentScheduler({
       onAppointmentBooked();
     }, 500);
   };
+  
+  if (!doctor) {
+    return (
+        <Card className="w-full">
+            <CardHeader>
+                <CardTitle>Agendar Consulta Inicial</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-center text-muted-foreground">Nenhum clínico geral disponível para agendamento no momento.</p>
+            </CardContent>
+        </Card>
+    )
+  }
 
   return (
     <Card className="w-full">
@@ -148,7 +161,7 @@ export default function AppointmentScheduler({
               onSelect={date => { setSelectedDate(date); setSelectedTime(null); setConflict(null); }}
               disabled={(date) => {
                 const dayOfWeek = format(date, 'EEEE') as DayOfWeek;
-                return isBefore(date, new Date()) || !doctor?.availability[dayOfWeek];
+                return isBefore(date, new Date()) || !doctor.availability[dayOfWeek];
               }}
               initialFocus
             />
