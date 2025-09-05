@@ -13,7 +13,7 @@ import { ptBR } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Send } from 'lucide-react';
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 
@@ -60,10 +60,8 @@ export default function DoctorDashboardPage() {
             return;
         }
         
-        // Find next available slot for the specialist (simplified logic)
-        // This is a placeholder. A real implementation would need a more robust slot finding logic.
         const nextAvailableDate = new Date();
-        nextAvailableDate.setDate(nextAvailableDate.getDate() + 2); // 2 days from now
+        nextAvailableDate.setDate(nextAvailableDate.getDate() + 2);
         nextAvailableDate.setHours(10, 0, 0, 0);
 
         const newAppointment: Appointment = {
@@ -119,7 +117,7 @@ export default function DoctorDashboardPage() {
     const specialists = doctors.filter(d => d.specialty !== 'Clínico Geral' && d.id !== user?.id);
 
     return (
-        <div className="container mx-auto p-4 md:p-8">
+        <div className="container mx-auto p-4 sm:p-6 md:p-8">
             <header className="mb-8">
                 <h1 className="text-3xl font-bold font-headline">Painel do Médico</h1>
                 <p className="text-muted-foreground">Bem-vindo(a), {user?.name}! Gerencie suas consultas aqui.</p>
@@ -136,8 +134,8 @@ export default function DoctorDashboardPage() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Paciente</TableHead>
-                                    <TableHead>Data</TableHead>
-                                    <TableHead>Hora</TableHead>
+                                    <TableHead className="hidden sm:table-cell">Data</TableHead>
+                                    <TableHead className="hidden md:table-cell">Hora</TableHead>
                                     <TableHead className="text-right">Ações</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -145,20 +143,27 @@ export default function DoctorDashboardPage() {
                                 {upcomingAppointments.length > 0 ? (
                                     upcomingAppointments.map(app => (
                                         <TableRow key={app.id}>
-                                            <TableCell className="font-medium">{app.patientName}</TableCell>
-                                            <TableCell>{format(new Date(app.dateTime), 'PPP', { locale: ptBR })}</TableCell>
-                                            <TableCell>{format(new Date(app.dateTime), 'p', { locale: ptBR })}</TableCell>
-                                            <TableCell className="text-right space-x-2">
-                                                 <Button size="sm" variant="outline" onClick={() => handleCompleteAppointment(app.id)}>
-                                                    <CheckCircle className="mr-2 h-4 w-4" />
-                                                    Concluir
-                                                </Button>
-                                                {user?.specialty === 'Clínico Geral' && (
-                                                    <Button size="sm" onClick={() => openReferralModal(app)}>
-                                                        <Send className="mr-2 h-4 w-4" />
-                                                        Encaminhar
+                                            <TableCell className="font-medium">
+                                              <div>{app.patientName}</div>
+                                              <div className="text-muted-foreground text-sm sm:hidden">
+                                                {format(new Date(app.dateTime), 'PPP p', { locale: ptBR })}
+                                              </div>
+                                            </TableCell>
+                                            <TableCell className="hidden sm:table-cell">{format(new Date(app.dateTime), 'PPP', { locale: ptBR })}</TableCell>
+                                            <TableCell className="hidden md:table-cell">{format(new Date(app.dateTime), 'p', { locale: ptBR })}</TableCell>
+                                            <TableCell className="text-right">
+                                                <div className="flex flex-col sm:flex-row gap-2 justify-end">
+                                                    <Button size="sm" variant="outline" onClick={() => handleCompleteAppointment(app.id)}>
+                                                        <CheckCircle className="mr-2 h-4 w-4" />
+                                                        Concluir
                                                     </Button>
-                                                )}
+                                                    {user?.specialty === 'Clínico Geral' && (
+                                                        <Button size="sm" onClick={() => openReferralModal(app)}>
+                                                            <Send className="mr-2 h-4 w-4" />
+                                                            Encaminhar
+                                                        </Button>
+                                                    )}
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -184,9 +189,8 @@ export default function DoctorDashboardPage() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Paciente</TableHead>
-                                    <TableHead>Data</TableHead>
-                                    <TableHead>Hora</TableHead>
-                                    <TableHead>Status</TableHead>
+                                    <TableHead className="hidden sm:table-cell">Data</TableHead>
+                                    <TableHead className="hidden md:table-cell">Status</TableHead>
                                     <TableHead>Notas</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -194,16 +198,20 @@ export default function DoctorDashboardPage() {
                                 {pastAppointments.length > 0 ? (
                                     pastAppointments.map(app => (
                                         <TableRow key={app.id} className="text-muted-foreground">
-                                            <TableCell className="font-medium">{app.patientName}</TableCell>
-                                            <TableCell>{format(new Date(app.dateTime), 'PPP', { locale: ptBR })}</TableCell>
-                                            <TableCell>{format(new Date(app.dateTime), 'p', { locale: ptBR })}</TableCell>
-                                            <TableCell>{getStatusBadge(app.status, app.dateTime)}</TableCell>
+                                            <TableCell className="font-medium">
+                                              <div>{app.patientName}</div>
+                                               <div className="text-muted-foreground text-sm sm:hidden">
+                                                {format(new Date(app.dateTime), 'PPP', { locale: ptBR })}
+                                              </div>
+                                            </TableCell>
+                                            <TableCell className="hidden sm:table-cell">{format(new Date(app.dateTime), 'PPP', { locale: ptBR })}</TableCell>
+                                            <TableCell className="hidden md:table-cell">{getStatusBadge(app.status, app.dateTime)}</TableCell>
                                             <TableCell>{app.notes ?? 'N/A'}</TableCell>
                                         </TableRow>
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="h-24 text-center">
+                                        <TableCell colSpan={4} className="h-24 text-center">
                                             Nenhum histórico de consulta encontrado.
                                         </TableCell>
                                     </TableRow>
@@ -215,7 +223,7 @@ export default function DoctorDashboardPage() {
             </div>
             
             <Dialog open={isReferralModalOpen} onOpenChange={setIsReferralModalOpen}>
-                <DialogContent>
+                <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle>Encaminhar Paciente</DialogTitle>
                         <DialogDescription>
@@ -225,7 +233,7 @@ export default function DoctorDashboardPage() {
                     <div className="py-4 space-y-4">
                         <div className="space-y-2">
                              <Label htmlFor="specialist">Especialista</Label>
-                             <Select onValueChange={setSelectedSpecialistId}>
+                             <Select onValueChange={setSelectedSpecialistId} value={selectedSpecialistId}>
                                  <SelectTrigger id="specialist">
                                      <SelectValue placeholder="Selecione a especialidade" />
                                  </SelectTrigger>
@@ -239,13 +247,12 @@ export default function DoctorDashboardPage() {
                              </Select>
                         </div>
                     </div>
-                    <DialogFooter>
-                         <Button variant="outline" onClick={() => setIsReferralModalOpen(false)}>Cancelar</Button>
-                         <Button onClick={handleReferral} disabled={!selectedSpecialistId}>Confirmar Encaminhamento</Button>
+                    <DialogFooter className="sm:justify-start">
+                         <Button type="button" variant="outline" onClick={() => setIsReferralModalOpen(false)}>Cancelar</Button>
+                         <Button type="button" onClick={handleReferral} disabled={!selectedSpecialistId}>Confirmar Encaminhamento</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
         </div>
     );
 }
-    

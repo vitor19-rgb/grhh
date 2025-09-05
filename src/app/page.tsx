@@ -10,30 +10,35 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background">
       <header className="px-4 lg:px-6 h-16 flex items-center bg-card/80 backdrop-blur-sm sticky top-0 z-50 border-b">
         <Logo />
-        <nav className="ml-auto flex items-center gap-4 sm:gap-6">
-          <Button asChild variant="ghost">
+        <nav className="ml-auto flex items-center gap-2 sm:gap-4">
+          <Button asChild variant="ghost" size="sm">
             <Link href="/login">Login do Paciente</Link>
           </Button>
-          <Button asChild variant="outline">
+          <Button asChild variant="outline" size="sm">
             <Link href="/doctor/login">Login do Médico</Link>
           </Button>
-          <Button asChild variant="outline" className="hidden sm:flex">
+          <Button asChild variant="outline" size="sm" className="hidden sm:flex">
             <Link href="/admin/login">Login de Admin</Link>
           </Button>
         </nav>
       </header>
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
+        <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-2">
-                  <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none font-headline">
+                  <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-6xl/none font-headline">
                     Agendamento de Consultas Médicas Sem Esforço, na Ponta dos Seus Dedos
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
                     ConsuOnline ajuda você a agendar suas consultas de saúde com facilidade. Diga adeus à espera ao telefone.
                   </p>
+                </div>
+                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                  <Button asChild size="lg">
+                    <Link href="/login">Agende Sua Consulta</Link>
+                  </Button>
                 </div>
               </div>
               <Image
@@ -62,21 +67,21 @@ export default function Home() {
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl items-start gap-8 sm:grid-cols-2 md:gap-12 lg:grid-cols-3 lg:max-w-none mt-12">
-              <div className="grid gap-1 text-center">
+              <div className="grid gap-1 text-center p-4">
                  <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
                     <User className="h-8 w-8 text-primary" />
                   </div>
                 <h3 className="text-lg font-bold font-headline">Painel Centrado no Paciente</h3>
                 <p className="text-sm text-muted-foreground">Veja os próximos agendamentos e agende novos em seu painel pessoal.</p>
               </div>
-              <div className="grid gap-1 text-center">
+              <div className="grid gap-1 text-center p-4">
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
                   <Shield className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-lg font-bold font-headline">Gerenciamento Administrativo</h3>
                 <p className="text-sm text-muted-foreground">Administradores podem gerenciar facilmente os horários dos médicos e os registros dos pacientes através de um painel seguro.</p>
               </div>
-              <div className="grid gap-1 text-center">
+              <div className="grid gap-1 text-center p-4">
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
                   <BrainCircuit className="h-8 w-8 text-primary" />
                 </div>

@@ -20,7 +20,7 @@ export default function PatientsTab({ patients, appointments }: PatientsTabProps
         <TableHeader>
           <TableRow>
             <TableHead>Nome</TableHead>
-            <TableHead>Email</TableHead>
+            <TableHead className="hidden sm:table-cell">Email</TableHead>
             <TableHead className="text-center">Consultas</TableHead>
           </TableRow>
         </TableHeader>
@@ -28,7 +28,7 @@ export default function PatientsTab({ patients, appointments }: PatientsTabProps
           {patients.map(patient => (
             <TableRow key={patient.id}>
               <TableCell className="font-medium">{patient.name}</TableCell>
-              <TableCell>{patient.email}</TableCell>
+              <TableCell className="hidden sm:table-cell">{patient.email}</TableCell>
               <TableCell className="text-center">
                  <Badge variant="secondary">{getAppointmentCount(patient.id)}</Badge>
               </TableCell>

@@ -107,7 +107,7 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
               <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Médico
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[625px] max-h-[90vh] flex flex-col">
+          <DialogContent className="sm:max-w-xl max-h-[90vh] flex flex-col">
             <DialogHeader>
               <DialogTitle>Adicionar Novo Médico</DialogTitle>
               <DialogDescription>Preencha os detalhes para adicionar um novo médico ao sistema.</DialogDescription>
@@ -115,7 +115,7 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
             <ScrollArea className="pr-6 -mr-6">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField control={form.control} name="name" render={({ field }) => (
                       <FormItem><FormLabel>Nome Completo</FormLabel><FormControl><Input placeholder="Dr. João da Silva" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
@@ -123,7 +123,7 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
                       <FormItem><FormLabel>Especialidade</FormLabel><FormControl><Input placeholder="Cardiologia" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField control={form.control} name="email" render={({ field }) => (
                       <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="medico@email.com" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
@@ -139,22 +139,22 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
                     <FormLabel>Disponibilidade</FormLabel>
                     <div className="space-y-2">
                       {fields.map((field, index) => (
-                        <div key={field.id} className="flex items-center gap-4 p-2 border rounded-md">
+                        <div key={field.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 p-2 border rounded-md">
                           <FormField control={form.control} name={`availability.${index}.enabled`} render={({ field }) => (
-                            <FormItem className="flex items-center gap-2 space-y-0">
+                            <FormItem className="flex items-center gap-2 space-y-0 w-full sm:w-auto">
                               <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-                              <FormLabel className="w-24">{weekDaysPT[weekDays[index]]}</FormLabel>
+                              <FormLabel className="w-24 min-w-max">{weekDaysPT[weekDays[index]]}</FormLabel>
                             </FormItem>
                           )} />
                           {form.watch(`availability.${index}.enabled`) && (
-                              <>
+                              <div className="flex items-center gap-2 w-full">
                                 <FormField control={form.control} name={`availability.${index}.start`} render={({ field }) => (
-                                  <FormItem><FormLabel className="text-xs">Início</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
+                                  <FormItem className="flex-1"><FormLabel className="text-xs">Início</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
                                 )} />
                                 <FormField control={form.control} name={`availability.${index}.end`} render={({ field }) => (
-                                  <FormItem><FormLabel className="text-xs">Fim</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
+                                  <FormItem className="flex-1"><FormLabel className="text-xs">Fim</FormLabel><FormControl><Input type="time" {...field} /></FormControl></FormItem>
                                 )} />
-                              </>
+                              </div>
                             )}
                         </div>
                       ))}
@@ -175,8 +175,8 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
           <TableHeader>
             <TableRow>
               <TableHead>Nome</TableHead>
-              <TableHead>Especialidade</TableHead>
-              <TableHead>Dias Disponíveis</TableHead>
+              <TableHead className="hidden md:table-cell">Especialidade</TableHead>
+              <TableHead className="hidden lg:table-cell">Dias Disponíveis</TableHead>
               <TableHead className="text-right"></TableHead>
             </TableRow>
           </TableHeader>
@@ -184,8 +184,8 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
             {doctors.map(doctor => (
               <TableRow key={doctor.id}>
                 <TableCell className="font-medium">{doctor.name}</TableCell>
-                <TableCell>{doctor.specialty}</TableCell>
-                <TableCell>{Object.keys(doctor.availability).map(getDayNameInPortuguese).join(', ')}</TableCell>
+                <TableCell className="hidden md:table-cell">{doctor.specialty}</TableCell>
+                <TableCell className="hidden lg:table-cell">{Object.keys(doctor.availability).map(getDayNameInPortuguese).join(', ')}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>

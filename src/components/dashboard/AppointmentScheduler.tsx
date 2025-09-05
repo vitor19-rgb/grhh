@@ -158,7 +158,7 @@ export default function AppointmentScheduler({
         {selectedDate && (
           <div>
             <label className="text-sm font-medium mb-2 block">2. Escolha um Horário</label>
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
               {availableTimeSlots.map(time => (
                 <Button 
                   key={time} 
