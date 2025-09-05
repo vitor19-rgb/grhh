@@ -27,6 +27,7 @@ export interface Appointment {
   dateTime: string; // ISO string
   status: 'upcoming' | 'completed' | 'cancelled';
   notes?: string;
+  isNew?: boolean;
 }
 
 export type DayOfWeek = 'Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday';

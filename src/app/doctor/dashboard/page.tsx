@@ -75,6 +75,7 @@ export default function DoctorDashboardPage() {
             dateTime: nextAvailableDate.toISOString(),
             status: 'upcoming',
             notes: `Encaminhado por ${user?.name} (${user?.specialty}).`,
+            isNew: true,
         };
 
         setAppointments(prev => [...prev, newAppointment]);
