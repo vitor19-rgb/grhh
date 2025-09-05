@@ -120,12 +120,12 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
                       <FormItem><FormLabel>Nome Completo</FormLabel><FormControl><Input placeholder="Dr. João da Silva" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="specialty" render={({ field }) => (
-                      <FormItem><FormLabel>Especialidade</FormLabel><FormControl><Input placeholder="Cardiologia" {...field} /></FormControl><FormMessage /></FormItem>
+                      <FormItem><FormLabel>Especialidade</FormLabel><FormControl><Input placeholder="Clínico Geral" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField control={form.control} name="email" render={({ field }) => (
-                      <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="medico@email.com" {...field} /></FormControl><FormMessage /></FormItem>
+                      <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="medico@email.com" {...field} /></FormControl><FormMessage /></FormMessage>
                     )} />
                     <FormField control={form.control} name="password" render={({ field }) => (
                       <FormItem><FormLabel>Senha</FormLabel><FormControl><Input type="password" {...field} /></FormControl><FormMessage /></FormItem>
@@ -196,6 +196,13 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
                 </TableCell>
               </TableRow>
             ))}
+             {doctors.length === 0 && (
+                <TableRow>
+                    <TableCell colSpan={4} className="h-24 text-center">
+                    Nenhum médico encontrado. Adicione um para começar.
+                    </TableCell>
+                </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>

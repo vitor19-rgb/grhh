@@ -40,12 +40,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user: null,
   });
   const [patients, setPatients] = useLocalStorage<Patient[]>(PATIENTS_KEY, []);
-  const [doctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, initialDoctors);
+  const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, initialDoctors);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // If there are no doctors in local storage, initialize with default data
+    if (localStorage.getItem(DOCTORS_KEY) === null) {
+      setDoctors(initialDoctors);
+    }
     setIsLoading(false);
-  }, []);
+  }, [setDoctors]);
 
   const login = (email: string, pass: string): boolean => {
     const patient = patients.find(p => p.email === email && p.password === pass);
@@ -143,5 +147,3 @@ export const ProtectRoute = ({ children, adminOnly = false, doctorOnly = false }
 
   return <>{children}</>;
 };
-
-    
