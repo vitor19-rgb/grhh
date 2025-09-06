@@ -20,6 +20,7 @@ interface AuthContextType {
   adminLogin: (user: string, pass: string) => boolean;
   logout: () => void;
   register: (patient: Patient) => boolean;
+  updateUser: (updatedUser: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -44,8 +45,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // This effect seeds the initial doctors into localStorage ONLY if it's not already present.
-    // This ensures that any changes made by the admin are persisted and not overwritten on page load.
     const storedDoctors = localStorage.getItem(DOCTORS_KEY);
     if (!storedDoctors || JSON.parse(storedDoctors).length === 0) {
       setDoctors(initialDoctors);
@@ -100,8 +99,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setPatients([...patients, patient]);
     return true;
   };
+  
+  const updateUser = (updatedUser: User) => {
+    if (auth.user) {
+      const newAuth = { ...auth, user: updatedUser };
+      setAuth(newAuth);
 
-  const contextValue: AuthContextType = { ...auth, isLoading, login, doctorLogin, adminLogin, logout, register };
+      if (auth.isDoctor) {
+        setDoctors(docs => docs.map(d => d.id === updatedUser.id ? updatedUser as Doctor : d));
+      } else {
+        setPatients(pats => pats.map(p => p.id === updatedUser.id ? updatedUser as Patient : p));
+      }
+    }
+  };
+
+  const contextValue: AuthContextType = { ...auth, isLoading, login, doctorLogin, adminLogin, logout, register, updateUser };
 
   return (
     <AuthContext.Provider value={contextValue}>
@@ -132,7 +144,6 @@ export const ProtectRoute = ({ children, adminOnly = false, doctorOnly = false }
         if (adminOnly && !isAdmin) router.push('/dashboard');
         if (doctorOnly && !isDoctor) router.push('/dashboard');
         if (!adminOnly && !doctorOnly && (isAdmin || isDoctor)) {
-            // A regular user is trying to access a patient dashboard, but is an admin or doctor
             if(isAdmin) router.push('/admin/dashboard');
             if(isDoctor) router.push('/doctor/dashboard');
         }

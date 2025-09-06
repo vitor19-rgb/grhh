@@ -4,6 +4,7 @@ export interface Patient {
   email: string;
   password: string; // NOTE: In a real app, never store plain text passwords.
   schedule?: string;
+  avatarUrl?: string;
 }
 
 export interface Doctor {
@@ -16,6 +17,7 @@ export interface Doctor {
     [day: string]: { start: string; end:string } | undefined;
   };
   appointmentDuration: number; // in minutes
+  avatarUrl?: string;
 }
 
 export interface Appointment {
@@ -31,4 +33,3 @@ export interface Appointment {
 }
 
 export type DayOfWeek = 'Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday';
-    
