@@ -31,6 +31,12 @@ export default function PatientLoginPage() {
                   Faça login aqui
                 </Link>
               </div>
+              <div className="mt-2 text-center text-sm">
+                É um administrador?{' '}
+                <Link href="/admin/login" className="underline text-primary">
+                  Acesse aqui
+                </Link>
+              </div>
             </CardContent>
           </Card>
         </div>
