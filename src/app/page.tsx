@@ -69,7 +69,7 @@ export default function Home() {
                 </div>
               </div>
               <Image
-                src="https://picsum.photos/600/400"
+                src="https://www.conexasaude.com.br/img/Background/user-mobile-conexa-photo-compressed.webp"
                 width="600"
                 height="400"
                 alt="Médico consultando um paciente"
