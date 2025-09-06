@@ -26,25 +26,46 @@ export default function DoctorDashboardPage() {
     const [patients] = useLocalStorage<Patient[]>(PATIENTS_KEY, []);
 
     const { toast } = useToast();
+    
     const [isReferralModalOpen, setIsReferralModalOpen] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
     const [selectedSpecialistId, setSelectedSpecialistId] = useState<string>('');
     const [referralNotes, setReferralNotes] = useState('');
 
-    const handleCompleteAppointment = (appointmentId: string) => {
+    const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+    const [appointmentToComplete, setAppointmentToComplete] = useState<Appointment | null>(null);
+    const [completionNotes, setCompletionNotes] = useState('');
+
+    const openCompletionModal = (appointment: Appointment) => {
+        setAppointmentToComplete(appointment);
+        setCompletionNotes(appointment.notes || ''); // Pre-fill with existing notes if any
+        setIsCompleteModalOpen(true);
+    };
+    
+    const handleCompleteAppointment = () => {
+        if (!appointmentToComplete) return;
+
         setAppointments(prev =>
             prev.map(app =>
-                app.id === appointmentId ? { ...app, status: 'completed' } : app
+                app.id === appointmentToComplete.id 
+                    ? { ...app, status: 'completed', notes: completionNotes } 
+                    : app
             )
         );
         toast({
             title: 'Consulta Concluída!',
-            description: 'A consulta foi marcada como concluída.',
+            description: 'A consulta foi marcada como concluída com sucesso.',
         });
+        
+        setIsCompleteModalOpen(false);
+        setAppointmentToComplete(null);
+        setCompletionNotes('');
     };
     
     const openReferralModal = (appointment: Appointment) => {
         setSelectedAppointment(appointment);
+        setReferralNotes('');
+        setSelectedSpecialistId('');
         setIsReferralModalOpen(true);
     };
 
@@ -75,7 +96,7 @@ export default function DoctorDashboardPage() {
             doctorName: specialist.name,
             dateTime: nextAvailableDate.toISOString(),
             status: 'upcoming',
-            notes: `Encaminhado por ${user?.name}. Motivo: ${referralNotes || 'N/A'}`,
+            notes: `Encaminhado por ${user?.name}. Motivo: ${referralNotes || 'Avaliação solicitada.'}`,
             isNew: true, // Mark this as a new referral for the patient
         };
 
@@ -83,7 +104,7 @@ export default function DoctorDashboardPage() {
         setAppointments(prev => {
             const updatedAppointments = prev.map(app =>
                 app.id === selectedAppointment.id 
-                    ? { ...app, status: 'completed', notes: `Paciente encaminhado para ${specialist.name} (${specialist.specialty}).` } 
+                    ? { ...app, status: 'completed', notes: `Paciente encaminhado para ${specialist.name} (${specialist.specialty}). Motivo: ${referralNotes || 'N/A'}` } 
                     : app
             );
             return [...updatedAppointments, newAppointment];
@@ -143,6 +164,7 @@ export default function DoctorDashboardPage() {
                                         <TableHead>Paciente</TableHead>
                                         <TableHead className="hidden sm:table-cell">Data</TableHead>
                                         <TableHead className="hidden md:table-cell">Hora</TableHead>
+                                        <TableHead>Notas Iniciais</TableHead>
                                         <TableHead className="text-right">Ações</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -158,9 +180,10 @@ export default function DoctorDashboardPage() {
                                                 </TableCell>
                                                 <TableCell className="hidden sm:table-cell">{format(new Date(app.dateTime), 'PPP', { locale: ptBR })}</TableCell>
                                                 <TableCell className="hidden md:table-cell">{format(new Date(app.dateTime), 'p', { locale: ptBR })}</TableCell>
+                                                <TableCell className="text-xs text-muted-foreground max-w-[200px] truncate">{app.notes}</TableCell>
                                                 <TableCell className="text-right">
                                                     <div className="flex flex-col sm:flex-row gap-2 justify-end">
-                                                        <Button size="sm" variant="outline" onClick={() => handleCompleteAppointment(app.id)}>
+                                                        <Button size="sm" variant="outline" onClick={() => openCompletionModal(app)}>
                                                             <CheckCircle className="mr-2 h-4 w-4" />
                                                             Concluir
                                                         </Button>
@@ -176,7 +199,7 @@ export default function DoctorDashboardPage() {
                                         ))
                                      ) : (
                                         <TableRow>
-                                            <TableCell colSpan={4} className="h-24 text-center">
+                                            <TableCell colSpan={5} className="h-24 text-center">
                                                 Nenhuma próxima consulta encontrada.
                                             </TableCell>
                                         </TableRow>
@@ -200,7 +223,7 @@ export default function DoctorDashboardPage() {
                                         <TableHead>Paciente</TableHead>
                                         <TableHead className="hidden sm:table-cell">Data</TableHead>
                                         <TableHead className="hidden md:table-cell">Status</TableHead>
-                                        <TableHead>Notas</TableHead>
+                                        <TableHead>Notas Finais</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -232,12 +255,13 @@ export default function DoctorDashboardPage() {
                 </Card>
             </div>
             
+            {/* Referral Modal */}
             <Dialog open={isReferralModalOpen} onOpenChange={setIsReferralModalOpen}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle>Encaminhar Paciente</DialogTitle>
                         <DialogDescription>
-                            Selecione um especialista para encaminhar {selectedAppointment?.patientName}. A consulta atual será marcada como concluída com uma nota de encaminhamento.
+                            Selecione um especialista para encaminhar {selectedAppointment?.patientName}. A consulta atual será marcada como concluída.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="py-4 space-y-4">
@@ -257,10 +281,10 @@ export default function DoctorDashboardPage() {
                              </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="referral-notes">Motivo do Encaminhamento</Label>
+                            <Label htmlFor="referral-notes">Motivo do Encaminhamento (Notas)</Label>
                             <Textarea 
                                 id="referral-notes"
-                                placeholder="Descreva o motivo clínico para o encaminhamento..."
+                                placeholder="Descreva o motivo clínico para o encaminhamento. Esta nota será visível para o especialista..."
                                 value={referralNotes}
                                 onChange={(e) => setReferralNotes(e.target.value)}
                             />
@@ -269,6 +293,34 @@ export default function DoctorDashboardPage() {
                     <DialogFooter className="sm:justify-start">
                          <Button type="button" variant="outline" onClick={() => setIsReferralModalOpen(false)}>Cancelar</Button>
                          <Button type="button" onClick={handleReferral} disabled={!selectedSpecialistId}>Confirmar Encaminhamento</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Complete Appointment Modal */}
+             <Dialog open={isCompleteModalOpen} onOpenChange={setIsCompleteModalOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Concluir Consulta</DialogTitle>
+                        <DialogDescription>
+                            Adicione suas anotações finais para a consulta com {appointmentToComplete?.patientName}.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4 space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="completion-notes">Notas da Consulta</Label>
+                            <Textarea 
+                                id="completion-notes"
+                                placeholder="Descreva o diagnóstico, tratamento e observações finais..."
+                                value={completionNotes}
+                                onChange={(e) => setCompletionNotes(e.target.value)}
+                                rows={6}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter className="sm:justify-start">
+                         <Button type="button" variant="outline" onClick={() => setIsCompleteModalOpen(false)}>Cancelar</Button>
+                         <Button type="button" onClick={handleCompleteAppointment}>Salvar e Concluir</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
