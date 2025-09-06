@@ -137,11 +137,14 @@ export default function DashboardPage() {
               <AlertDialogTitle>Novo Encaminhamento!</AlertDialogTitle>
               <AlertDialogDescription>
                 Seu clínico geral agendou uma nova consulta para você com um especialista.
-                <div className="mt-4 text-left p-3 bg-secondary rounded-md">
+                <div className="mt-4 text-left p-3 bg-secondary rounded-md space-y-2">
                   <div><strong>Médico:</strong> {newReferral.doctorName}</div>
                   <div><strong>Especialidade:</strong> {doctors.find(d => d.id === newReferral.doctorId)?.specialty}</div>
                   <div><strong>Data:</strong> {format(new Date(newReferral.dateTime), 'PPP', { locale: ptBR })}</div>
                   <div><strong>Hora:</strong> {format(new Date(newReferral.dateTime), 'p', { locale: ptBR })}</div>
+                  {newReferral.notes && (
+                     <div><strong>Notas do Médico:</strong> {newReferral.notes}</div>
+                  )}
                 </div>
               </AlertDialogDescription>
             </AlertDialogHeader>

@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 
 export default function DoctorDashboardPage() {
@@ -28,6 +29,7 @@ export default function DoctorDashboardPage() {
     const [isReferralModalOpen, setIsReferralModalOpen] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
     const [selectedSpecialistId, setSelectedSpecialistId] = useState<string>('');
+    const [referralNotes, setReferralNotes] = useState('');
 
     const handleCompleteAppointment = (appointmentId: string) => {
         setAppointments(prev =>
@@ -73,7 +75,7 @@ export default function DoctorDashboardPage() {
             doctorName: specialist.name,
             dateTime: nextAvailableDate.toISOString(),
             status: 'upcoming',
-            notes: `Encaminhado por ${user?.name} (${user?.specialty}).`,
+            notes: `Encaminhado por ${user?.name}. Motivo: ${referralNotes || 'N/A'}`,
             isNew: true, // Mark this as a new referral for the patient
         };
 
@@ -95,6 +97,7 @@ export default function DoctorDashboardPage() {
         setIsReferralModalOpen(false);
         setSelectedAppointment(null);
         setSelectedSpecialistId('');
+        setReferralNotes('');
     };
 
 
@@ -252,6 +255,15 @@ export default function DoctorDashboardPage() {
                                      ))}
                                  </SelectContent>
                              </Select>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="referral-notes">Motivo do Encaminhamento</Label>
+                            <Textarea 
+                                id="referral-notes"
+                                placeholder="Descreva o motivo clínico para o encaminhamento..."
+                                value={referralNotes}
+                                onChange={(e) => setReferralNotes(e.target.value)}
+                            />
                         </div>
                     </div>
                     <DialogFooter className="sm:justify-start">
