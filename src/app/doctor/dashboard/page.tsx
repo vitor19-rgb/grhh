@@ -11,12 +11,15 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Send } from 'lucide-react';
+import { CheckCircle, Send, MoreVertical, Download } from 'lucide-react';
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 
 export default function DoctorDashboardPage() {
@@ -35,6 +38,41 @@ export default function DoctorDashboardPage() {
     const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
     const [appointmentToComplete, setAppointmentToComplete] = useState<Appointment | null>(null);
     const [completionNotes, setCompletionNotes] = useState('');
+    
+    const downloadPdf = (appointment: Appointment) => {
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        
+        pdf.setFontSize(20);
+        pdf.text('Resumo da Consulta', pageWidth / 2, 20, { align: 'center' });
+        
+        pdf.setFontSize(12);
+        pdf.text(`Data: ${format(new Date(appointment.dateTime), 'PPP p', { locale: ptBR })}`, 15, 40);
+        pdf.text(`Status: ${appointment.status === 'completed' ? 'Concluída' : 'Próxima'}`, 15, 48);
+        
+        pdf.setLineWidth(0.5);
+        pdf.line(15, 55, pageWidth - 15, 55);
+
+        pdf.setFontSize(14);
+        pdf.text('Paciente', 15, 65);
+        pdf.setFontSize(12);
+        pdf.text(appointment.patientName, 15, 73);
+
+        pdf.setFontSize(14);
+        pdf.text('Médico', pageWidth / 2, 65);
+        pdf.setFontSize(12);
+        pdf.text(appointment.doctorName, pageWidth / 2, 73);
+        
+        pdf.line(15, 80, pageWidth - 15, 80);
+        
+        pdf.setFontSize(14);
+        pdf.text('Notas da Consulta', 15, 90);
+        pdf.setFontSize(12);
+        const notes = pdf.splitTextToSize(appointment.notes || 'Nenhuma nota fornecida.', pageWidth - 30);
+        pdf.text(notes, 15, 98);
+        
+        pdf.save(`consulta-${appointment.id}.pdf`);
+    };
 
     const openCompletionModal = (appointment: Appointment) => {
         setAppointmentToComplete(appointment);
@@ -182,18 +220,30 @@ export default function DoctorDashboardPage() {
                                                 <TableCell className="hidden md:table-cell">{format(new Date(app.dateTime), 'p', { locale: ptBR })}</TableCell>
                                                 <TableCell className="hidden lg:table-cell text-xs text-muted-foreground max-w-[200px] truncate">{app.notes}</TableCell>
                                                 <TableCell className="text-right">
-                                                    <div className="flex flex-col sm:flex-row gap-2 justify-end">
-                                                        <Button size="sm" variant="outline" onClick={() => openCompletionModal(app)}>
-                                                            <CheckCircle className="mr-2 h-4 w-4" />
-                                                            Concluir
-                                                        </Button>
-                                                        {user?.specialty.toLowerCase() === 'clínico geral' && (
-                                                            <Button size="sm" onClick={() => openReferralModal(app)}>
-                                                                <Send className="mr-2 h-4 w-4" />
-                                                                Encaminhar
+                                                     <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" size="icon">
+                                                                <MoreVertical className="h-4 w-4" />
                                                             </Button>
-                                                        )}
-                                                    </div>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                            <DropdownMenuItem onClick={() => openCompletionModal(app)}>
+                                                                <CheckCircle className="mr-2 h-4 w-4" />
+                                                                Concluir
+                                                            </DropdownMenuItem>
+                                                            {user?.specialty.toLowerCase() === 'clínico geral' && (
+                                                                <DropdownMenuItem onClick={() => openReferralModal(app)}>
+                                                                    <Send className="mr-2 h-4 w-4" />
+                                                                    Encaminhar
+                                                                </DropdownMenuItem>
+                                                            )}
+                                                            <DropdownMenuSeparator />
+                                                            <DropdownMenuItem onClick={() => downloadPdf(app)}>
+                                                                <Download className="mr-2 h-4 w-4" />
+                                                                Baixar PDF
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
                                                 </TableCell>
                                             </TableRow>
                                         ))
@@ -224,6 +274,7 @@ export default function DoctorDashboardPage() {
                                         <TableHead className="hidden sm:table-cell">Data</TableHead>
                                         <TableHead className="hidden md:table-cell">Status</TableHead>
                                         <TableHead>Notas Finais</TableHead>
+                                        <TableHead className="text-right"></TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -239,11 +290,16 @@ export default function DoctorDashboardPage() {
                                                 <TableCell className="hidden sm:table-cell">{format(new Date(app.dateTime), 'PPP', { locale: ptBR })}</TableCell>
                                                 <TableCell className="hidden md:table-cell">{getStatusBadge(app.status, app.dateTime)}</TableCell>
                                                 <TableCell className="max-w-[150px] sm:max-w-xs truncate">{app.notes ?? 'N/A'}</TableCell>
+                                                <TableCell className="text-right">
+                                                    <Button variant="ghost" size="icon" onClick={() => downloadPdf(app)}>
+                                                        <Download className="h-4 w-4" />
+                                                    </Button>
+                                                </TableCell>
                                             </TableRow>
                                         ))
                                     ) : (
                                         <TableRow>
-                                            <TableCell colSpan={4} className="h-24 text-center">
+                                            <TableCell colSpan={5} className="h-24 text-center">
                                                 Nenhum histórico de consulta encontrado.
                                             </TableCell>
                                         </TableRow>
