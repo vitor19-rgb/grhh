@@ -2,25 +2,52 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, Shield, BrainCircuit } from 'lucide-react';
+import { User, Shield, BrainCircuit, Menu, LogIn } from 'lucide-react';
 import { Logo } from '@/components/Logo';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <header className="px-4 lg:px-6 h-16 flex items-center bg-card/80 backdrop-blur-sm sticky top-0 z-50 border-b">
         <Logo />
-        <nav className="ml-auto flex items-center gap-2 sm:gap-4">
+        <nav className="ml-auto hidden sm:flex items-center gap-2 sm:gap-4">
           <Button asChild variant="ghost" size="sm">
             <Link href="/login">Login do Paciente</Link>
           </Button>
           <Button asChild variant="outline" size="sm">
             <Link href="/doctor/login">Login do Médico</Link>
           </Button>
-          <Button asChild variant="outline" size="sm" className="hidden sm:flex">
+          <Button asChild variant="outline" size="sm">
             <Link href="/admin/login">Login de Admin</Link>
           </Button>
         </nav>
+        <div className="ml-auto sm:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <LogIn className="h-5 w-5" />
+                <span className="sr-only">Abrir menu de login</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link href="/login">Login do Paciente</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/doctor/login">Login do Médico</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/admin/login">Login de Admin</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </header>
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32">
