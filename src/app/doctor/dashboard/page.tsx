@@ -164,7 +164,7 @@ export default function DoctorDashboardPage() {
                                         <TableHead>Paciente</TableHead>
                                         <TableHead className="hidden sm:table-cell">Data</TableHead>
                                         <TableHead className="hidden md:table-cell">Hora</TableHead>
-                                        <TableHead>Notas Iniciais</TableHead>
+                                        <TableHead className="hidden lg:table-cell">Notas Iniciais</TableHead>
                                         <TableHead className="text-right">Ações</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -180,7 +180,7 @@ export default function DoctorDashboardPage() {
                                                 </TableCell>
                                                 <TableCell className="hidden sm:table-cell">{format(new Date(app.dateTime), 'PPP', { locale: ptBR })}</TableCell>
                                                 <TableCell className="hidden md:table-cell">{format(new Date(app.dateTime), 'p', { locale: ptBR })}</TableCell>
-                                                <TableCell className="text-xs text-muted-foreground max-w-[200px] truncate">{app.notes}</TableCell>
+                                                <TableCell className="hidden lg:table-cell text-xs text-muted-foreground max-w-[200px] truncate">{app.notes}</TableCell>
                                                 <TableCell className="text-right">
                                                     <div className="flex flex-col sm:flex-row gap-2 justify-end">
                                                         <Button size="sm" variant="outline" onClick={() => openCompletionModal(app)}>
@@ -238,7 +238,7 @@ export default function DoctorDashboardPage() {
                                                 </TableCell>
                                                 <TableCell className="hidden sm:table-cell">{format(new Date(app.dateTime), 'PPP', { locale: ptBR })}</TableCell>
                                                 <TableCell className="hidden md:table-cell">{getStatusBadge(app.status, app.dateTime)}</TableCell>
-                                                <TableCell>{app.notes ?? 'N/A'}</TableCell>
+                                                <TableCell className="max-w-[150px] sm:max-w-xs truncate">{app.notes ?? 'N/A'}</TableCell>
                                             </TableRow>
                                         ))
                                     ) : (

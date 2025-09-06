@@ -183,7 +183,10 @@ export default function DoctorsTab({ doctors, setDoctors }: DoctorsTabProps) {
           <TableBody>
             {doctors.map(doctor => (
               <TableRow key={doctor.id}>
-                <TableCell className="font-medium">{doctor.name}</TableCell>
+                <TableCell className="font-medium">
+                  <div>{doctor.name}</div>
+                  <div className="text-muted-foreground text-sm md:hidden">{doctor.specialty}</div>
+                </TableCell>
                 <TableCell className="hidden md:table-cell">{doctor.specialty}</TableCell>
                 <TableCell className="hidden lg:table-cell">{Object.keys(doctor.availability).map(getDayNameInPortuguese).join(', ')}</TableCell>
                 <TableCell className="text-right">
