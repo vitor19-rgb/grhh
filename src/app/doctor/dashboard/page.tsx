@@ -43,60 +43,57 @@ export default function DoctorDashboardPage() {
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 15;
         let y = 20;
 
-        const addText = (text: string, x: number, yPos: number, options = {}) => {
-            if (yPos > pageHeight - 20) {
-                pdf.addPage();
-                y = 20;
-                return y + 10;
-            }
-            pdf.text(text, x, yPos, options);
-            return yPos;
-        }
+        const addTextWithWrap = (text: string, x: number, yPos: number, options: any = {}) => {
+            const splitText = pdf.splitTextToSize(text, pageWidth - margin * 2);
+            splitText.forEach((line: string) => {
+                if (y > pageHeight - margin) {
+                    pdf.addPage();
+                    y = margin;
+                }
+                pdf.text(line, x, y, options);
+                y += 7; // Line height
+            });
+        };
         
         pdf.setFontSize(20);
-        y = addText('Resumo da Consulta', pageWidth / 2, y, { align: 'center' });
+        pdf.text('Resumo da Consulta', pageWidth / 2, y, { align: 'center' });
         y += 20;
         
         pdf.setFontSize(12);
-        y = addText(`Data: ${format(new Date(appointment.dateTime), 'PPP p', { locale: ptBR })}`, 15, y);
+        pdf.text(`Data: ${format(new Date(appointment.dateTime), 'PPP p', { locale: ptBR })}`, margin, y);
         y += 8;
-        y = addText(`Status: ${appointment.status === 'completed' ? 'Concluída' : 'Próxima'}`, 15, y);
+        pdf.text(`Status: ${appointment.status === 'completed' ? 'Concluída' : 'Próxima'}`, margin, y);
         y += 10;
         
         pdf.setLineWidth(0.5);
-        pdf.line(15, y, pageWidth - 15, y);
+        pdf.line(margin, y, pageWidth - margin, y);
         y += 10;
 
         pdf.setFontSize(14);
-        y = addText('Paciente', 15, y);
+        pdf.text('Paciente', margin, y);
         y += 8;
         pdf.setFontSize(12);
-        y = addText(appointment.patientName, 15, y);
-        y -= 8;
-        addText('Médico', pageWidth / 2, y - 8);
+        pdf.text(appointment.patientName, margin, y);
+
+        pdf.setFontSize(14);
+        pdf.text('Médico', pageWidth / 2, y - 8);
         y += 8;
-        addText(appointment.doctorName, pageWidth / 2, y - 8);
+        pdf.setFontSize(12);
+        pdf.text(appointment.doctorName, pageWidth / 2, y - 8);
         y += 10;
         
-        pdf.line(15, y, pageWidth - 15, y);
+        pdf.line(margin, y, pageWidth - margin, y);
         y += 10;
         
         pdf.setFontSize(14);
-        y = addText('Notas da Consulta', 15, y);
+        pdf.text('Notas da Consulta', margin, y);
         y += 8;
         pdf.setFontSize(12);
-        const notes = pdf.splitTextToSize(appointment.notes || 'Nenhuma nota fornecida.', pageWidth - 30);
         
-        notes.forEach((line: string) => {
-             if (y > pageHeight - 20) {
-                pdf.addPage();
-                y = 20;
-            }
-            pdf.text(line, 15, y);
-            y += 7;
-        });
+        addTextWithWrap(appointment.notes || 'Nenhuma nota fornecida.', margin, y);
         
         pdf.save(`consulta-${appointment.id}.pdf`);
     };
