@@ -42,34 +42,61 @@ export default function DoctorDashboardPage() {
     const downloadPdf = (appointment: Appointment) => {
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        let y = 20;
+
+        const addText = (text: string, x: number, yPos: number, options = {}) => {
+            if (yPos > pageHeight - 20) {
+                pdf.addPage();
+                y = 20;
+                return y + 10;
+            }
+            pdf.text(text, x, yPos, options);
+            return yPos;
+        }
         
         pdf.setFontSize(20);
-        pdf.text('Resumo da Consulta', pageWidth / 2, 20, { align: 'center' });
+        y = addText('Resumo da Consulta', pageWidth / 2, y, { align: 'center' });
+        y += 20;
         
         pdf.setFontSize(12);
-        pdf.text(`Data: ${format(new Date(appointment.dateTime), 'PPP p', { locale: ptBR })}`, 15, 40);
-        pdf.text(`Status: ${appointment.status === 'completed' ? 'Concluída' : 'Próxima'}`, 15, 48);
+        y = addText(`Data: ${format(new Date(appointment.dateTime), 'PPP p', { locale: ptBR })}`, 15, y);
+        y += 8;
+        y = addText(`Status: ${appointment.status === 'completed' ? 'Concluída' : 'Próxima'}`, 15, y);
+        y += 10;
         
         pdf.setLineWidth(0.5);
-        pdf.line(15, 55, pageWidth - 15, 55);
+        pdf.line(15, y, pageWidth - 15, y);
+        y += 10;
 
         pdf.setFontSize(14);
-        pdf.text('Paciente', 15, 65);
+        y = addText('Paciente', 15, y);
+        y += 8;
         pdf.setFontSize(12);
-        pdf.text(appointment.patientName, 15, 73);
-
-        pdf.setFontSize(14);
-        pdf.text('Médico', pageWidth / 2, 65);
-        pdf.setFontSize(12);
-        pdf.text(appointment.doctorName, pageWidth / 2, 73);
+        y = addText(appointment.patientName, 15, y);
+        y -= 8;
+        addText('Médico', pageWidth / 2, y - 8);
+        y += 8;
+        addText(appointment.doctorName, pageWidth / 2, y - 8);
+        y += 10;
         
-        pdf.line(15, 80, pageWidth - 15, 80);
+        pdf.line(15, y, pageWidth - 15, y);
+        y += 10;
         
         pdf.setFontSize(14);
-        pdf.text('Notas da Consulta', 15, 90);
+        y = addText('Notas da Consulta', 15, y);
+        y += 8;
         pdf.setFontSize(12);
         const notes = pdf.splitTextToSize(appointment.notes || 'Nenhuma nota fornecida.', pageWidth - 30);
-        pdf.text(notes, 15, 98);
+        
+        notes.forEach((line: string) => {
+             if (y > pageHeight - 20) {
+                pdf.addPage();
+                y = 20;
+            }
+            pdf.text(line, 15, y);
+            y += 7;
+        });
         
         pdf.save(`consulta-${appointment.id}.pdf`);
     };

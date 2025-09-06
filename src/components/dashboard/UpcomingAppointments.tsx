@@ -26,25 +26,30 @@ export default function UpcomingAppointments({ appointments, doctors }: Upcoming
   const downloadPdf = (appointmentId: string) => {
     const input = document.getElementById(`appointment-${appointmentId}`);
     if (input) {
-      html2canvas(input, { scale: 2 }).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        const canvasWidth = canvas.width;
-        const canvasHeight = canvas.height;
-        const ratio = canvasWidth / canvasHeight;
-        const width = pdfWidth - 20;
-        const height = width / ratio;
+      // The div to be captured is the direct parent of the button, which is the <li>
+      const captureDiv = input.closest('li');
+      if (captureDiv) {
+        html2canvas(captureDiv, { scale: 2 }).then((canvas) => {
+          const imgData = canvas.toDataURL('image/png');
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const imgProps = pdf.getImageProperties(imgData);
+          const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+          let heightLeft = imgHeight;
+          let position = 0;
 
-        let position = 10;
-        if (height > pdfHeight - 20) {
-            position = 10; 
-        }
+          pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+          heightLeft -= pdf.internal.pageSize.getHeight();
 
-        pdf.addImage(imgData, 'PNG', 10, position, width, height);
-        pdf.save(`consulta-${appointmentId}.pdf`);
-      });
+          while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+            heightLeft -= pdf.internal.pageSize.getHeight();
+          }
+          pdf.save(`consulta-${appointmentId}.pdf`);
+        });
+      }
     }
   };
 
@@ -58,8 +63,8 @@ export default function UpcomingAppointments({ appointments, doctors }: Upcoming
         {upcoming.length > 0 ? (
           <ul className="space-y-4">
             {upcoming.map(app => (
-              <li key={app.id} className="p-4 rounded-lg border bg-card">
-                 <div id={`appointment-${app.id}`} className="p-4 bg-card">
+              <li key={app.id} className="p-4 rounded-lg border bg-card" id={`appointment-card-${app.id}`}>
+                 <div className="p-4 bg-card">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <p className="font-semibold text-primary">{app.doctorName}</p>
@@ -84,7 +89,7 @@ export default function UpcomingAppointments({ appointments, doctors }: Upcoming
                     )}
                  </div>
                  <div className="mt-2 flex justify-end">
-                    <Button variant="outline" size="sm" onClick={() => downloadPdf(app.id)}>
+                    <Button id={`appointment-${app.id}`} variant="outline" size="sm" onClick={() => downloadPdf(app.id)}>
                         <Download className="mr-2 h-4 w-4" />
                         Baixar PDF
                     </Button>
