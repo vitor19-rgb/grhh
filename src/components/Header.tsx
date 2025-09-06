@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { LogOut, User, LayoutDashboard, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { LogOut, User, LayoutDashboard, Image as ImageIcon, Loader2, Home } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -102,6 +102,10 @@ export function Header() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => router.push('/')}>
+                  <Home className="mr-2 h-4 w-4" />
+                  <span>Tela Inicial</span>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push(getDashboardPath())}>
                   <LayoutDashboard className="mr-2 h-4 w-4" />
                   <span>Painel</span>
