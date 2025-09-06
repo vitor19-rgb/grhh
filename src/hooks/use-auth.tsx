@@ -3,11 +3,11 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import useLocalStorage from './use-local-storage';
-import { Doctor, Patient } from '@/lib/types';
+import { Doctor, Patient, AdminUser } from '@/lib/types';
 import { AUTH_KEY, DOCTORS_KEY, PATIENTS_KEY, initialDoctors } from '@/lib/data';
 import { Loader2 } from 'lucide-react';
 
-type User = Patient | Doctor;
+type User = Patient | Doctor | AdminUser;
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -32,6 +32,8 @@ interface AuthState {
   user: User | null;
 }
 
+const ADMIN_USER_DATA_KEY = 'consu_admin_user_data';
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [auth, setAuth] = useLocalStorage<AuthState>(AUTH_KEY, {
@@ -42,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
   const [patients, setPatients] = useLocalStorage<Patient[]>(PATIENTS_KEY, []);
   const [doctors, setDoctors] = useLocalStorage<Doctor[]>(DOCTORS_KEY, []);
+  const [adminUserData, setAdminUserData] = useLocalStorage<AdminUser | null>(ADMIN_USER_DATA_KEY, null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -73,7 +76,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const adminLogin = (user: string, pass: string): boolean => {
     if (user === 'admin@consu.online' && pass === 'admin123') {
-      setAuth({ isAuthenticated: true, isAdmin: true, isDoctor: false, user: { id: 'admin', name: 'Admin', email: 'admin@consu.online', password: '' } });
+       const adminUser: AdminUser = adminUserData || { 
+        id: 'admin', 
+        name: 'Admin', 
+        email: 'admin@consu.online' 
+      };
+      setAuth({ isAuthenticated: true, isAdmin: true, isDoctor: false, user: adminUser });
       return true;
     }
     return false;
@@ -105,7 +113,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const newAuth = { ...auth, user: updatedUser };
       setAuth(newAuth);
 
-      if (auth.isDoctor) {
+      if (auth.isAdmin) {
+         setAdminUserData(updatedUser as AdminUser);
+      } else if (auth.isDoctor) {
         setDoctors(docs => docs.map(d => d.id === updatedUser.id ? updatedUser as Doctor : d));
       } else {
         setPatients(pats => pats.map(p => p.id === updatedUser.id ? updatedUser as Patient : p));

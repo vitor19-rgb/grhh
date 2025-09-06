@@ -46,7 +46,9 @@ export function Header() {
     
     // Simple URL validation
     try {
-      new URL(avatarUrl);
+      if (avatarUrl) {
+         new URL(avatarUrl);
+      }
     } catch (_) {
        toast({
           variant: 'destructive',
@@ -58,7 +60,9 @@ export function Header() {
     }
     
     setTimeout(() => {
-      updateUser({ ...user, avatarUrl });
+      if (user) {
+        updateUser({ ...user, avatarUrl });
+      }
       setIsSaving(false);
       setIsProfileModalOpen(false);
       toast({
@@ -102,12 +106,10 @@ export function Header() {
                   <LayoutDashboard className="mr-2 h-4 w-4" />
                   <span>Painel</span>
                 </DropdownMenuItem>
-                 {!isAdmin && (
-                  <DropdownMenuItem onClick={openProfileModal}>
-                    <ImageIcon className="mr-2 h-4 w-4" />
-                    <span>Perfil</span>
-                  </DropdownMenuItem>
-                )}
+                <DropdownMenuItem onClick={openProfileModal}>
+                  <ImageIcon className="mr-2 h-4 w-4" />
+                  <span>Perfil</span>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>
                   <LogOut className="mr-2 h-4 w-4" />

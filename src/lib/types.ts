@@ -7,6 +7,13 @@ export interface Patient {
   avatarUrl?: string;
 }
 
+export interface AdminUser {
+  id: 'admin';
+  name: string;
+  email: string;
+  avatarUrl?: string;
+}
+
 export interface Doctor {
   id: string;
   name: string;
