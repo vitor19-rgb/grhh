@@ -120,7 +120,7 @@ export default function Home() {
         </section>
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t bg-card">
-        <p className="text-xs text-muted-foreground">&copy; 2024 ConsuOnline. Todos os direitos reservados.</p>
+        <p className="text-xs text-muted-foreground">&copy; 2025 ConsuOnline. Todos os direitos reservados.</p>
       </footer>
     </div>
   );
