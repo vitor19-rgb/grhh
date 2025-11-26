@@ -69,7 +69,7 @@ export default function Home() {
                 </div>
               </div>
               <Image
-                src="https://www.conexasaude.com.br/img/Background/user-mobile-conexa-photo-compressed.webp"
+                src="https://www.estacaounimed.com.br/fotos/23462346324623.jpg"
                 width="600"
                 height="400"
                 alt="Médico consultando um paciente"
